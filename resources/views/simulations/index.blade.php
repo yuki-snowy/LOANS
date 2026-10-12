@@ -3,53 +3,49 @@
 @section('title', 'シミュレーション履歴')
 
 @section('content')
-    <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <h1 class="font-serif text-3xl text-stone-900">シミュレーション履歴</h1>
-            <p class="mt-1 text-sm text-stone-500">返済試算と審査判定の結果を一覧します。</p>
+            <h1 class="section-title">シミュレーション履歴</h1>
+            <p class="mt-2 text-sm text-muted">返済試算と審査判定の結果を一覧します。</p>
         </div>
-        <a href="{{ route('simulations.create') }}" class="inline-flex items-center justify-center bg-teal-800 px-4 py-2 text-sm text-white transition hover:bg-teal-700">
-            新規試算
-        </a>
+        <a href="{{ route('simulations.create') }}" class="btn-suumo">新規試算</a>
     </div>
 
     @if ($simulations->isEmpty())
-        <div class="border border-dashed border-stone-300 bg-white px-6 py-16 text-center">
-            <p class="font-serif text-xl text-stone-800">まだシミュレーションがありません</p>
-            <p class="mt-2 text-sm text-stone-500">借入条件と年収を入力して、返済負担と審査シグナルを確認しましょう。</p>
-            <a href="{{ route('simulations.create') }}" class="mt-6 inline-flex bg-teal-800 px-4 py-2 text-sm text-white transition hover:bg-teal-700">
-                ローンを試算する
-            </a>
+        <div class="border border-dashed border-line bg-white px-6 py-16 text-center">
+            <p class="text-xl font-bold text-ink">まだシミュレーションがありません</p>
+            <p class="mt-2 text-sm text-muted">借入条件と年収を入力して、返済負担と審査シグナルを確認しましょう。</p>
+            <a href="{{ route('simulations.create') }}" class="btn-suumo mt-6">ローンを試算する</a>
         </div>
     @else
-        <div class="overflow-x-auto border border-stone-200 bg-white">
+        <div class="overflow-x-auto border border-line bg-white">
             <table class="min-w-full text-left text-sm">
-                <thead class="border-b border-stone-200 bg-stone-100 text-xs uppercase tracking-wide text-stone-500">
+                <thead class="border-b border-line bg-suumo-muted text-xs font-bold text-ink">
                     <tr>
-                        <th class="px-4 py-3 font-medium">日時</th>
-                        <th class="px-4 py-3 font-medium">物件</th>
-                        <th class="px-4 py-3 font-medium">借入額</th>
-                        <th class="px-4 py-3 font-medium">月々返済</th>
-                        <th class="px-4 py-3 font-medium">負担率</th>
-                        <th class="px-4 py-3 font-medium">判定</th>
-                        <th class="px-4 py-3 font-medium"></th>
+                        <th class="px-4 py-3">日時</th>
+                        <th class="px-4 py-3">物件</th>
+                        <th class="px-4 py-3">借入額</th>
+                        <th class="px-4 py-3">月々返済</th>
+                        <th class="px-4 py-3">負担率</th>
+                        <th class="px-4 py-3">判定</th>
+                        <th class="px-4 py-3"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($simulations as $simulation)
-                        <tr class="border-b border-stone-100 last:border-0 hover:bg-stone-50">
-                            <td class="px-4 py-3 text-stone-600">{{ $simulation->created_at?->format('Y-m-d H:i') }}</td>
-                            <td class="max-w-[12rem] truncate px-4 py-3">
+                        <tr class="border-b border-line last:border-0 hover:bg-suumo-muted/50">
+                            <td class="px-4 py-3 text-muted">{{ $simulation->created_at?->format('Y-m-d H:i') }}</td>
+                            <td class="max-w-[12rem] truncate px-4 py-3 font-bold">
                                 {{ $simulation->property?->name ?? '物件未指定' }}
                             </td>
                             <td class="px-4 py-3 tabular-nums">{{ number_format($simulation->borrowing_amount) }}万円</td>
                             <td class="px-4 py-3 tabular-nums">{{ number_format($simulation->monthly_payment_yen) }}円</td>
-                            <td class="px-4 py-3 tabular-nums">{{ number_format((float) $simulation->repayment_ratio_percent, 2) }}%</td>
+                            <td class="px-4 py-3 tabular-nums font-bold">{{ number_format((float) $simulation->repayment_ratio_percent, 2) }}%</td>
                             <td class="px-4 py-3">
                                 @include('simulations._status_badge', ['status' => $simulation->screening_status])
                             </td>
                             <td class="px-4 py-3 text-right">
-                                <a href="{{ route('simulations.show', $simulation) }}" class="text-teal-800 hover:underline">詳細</a>
+                                <a href="{{ route('simulations.show', $simulation) }}" class="font-bold text-suumo-dark hover:underline">詳細</a>
                             </td>
                         </tr>
                     @endforeach

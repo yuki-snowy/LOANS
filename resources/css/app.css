@@ -6,6 +6,149 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Source Sans 3', 'Hiragino Sans', 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif;
-    --font-serif: 'Source Serif 4', 'Hiragino Mincho ProN', 'Noto Serif JP', ui-serif, Georgia, serif;
+    --font-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, ui-sans-serif, system-ui, sans-serif;
+
+    /* SUUMO-inspired palette */
+    --color-suumo: #69b32d;
+    --color-suumo-dark: #549220;
+    --color-suumo-light: #eaf6d8;
+    --color-suumo-muted: #f3f9eb;
+    --color-price: #e60012;
+    --color-ink: #222222;
+    --color-muted: #666666;
+    --color-line: #d9d9d9;
+    --color-canvas: #f5f5f5;
+    --color-panel: #ffffff;
+}
+
+@layer base {
+    body {
+        color: var(--color-ink);
+        background-color: var(--color-canvas);
+    }
+
+    a {
+        color: inherit;
+    }
+}
+
+@layer components {
+    .btn-suumo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-suumo);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.875rem;
+        padding: 0.55rem 1rem;
+        border-radius: 2px;
+        transition: background-color 0.15s ease;
+    }
+
+    .btn-suumo:hover {
+        background-color: var(--color-suumo-dark);
+    }
+
+    .btn-suumo-outline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--color-suumo);
+        color: var(--color-suumo-dark);
+        background: #fff;
+        font-weight: 700;
+        font-size: 0.875rem;
+        padding: 0.5rem 0.95rem;
+        border-radius: 2px;
+        transition: background-color 0.15s ease;
+    }
+
+    .btn-suumo-outline:hover {
+        background-color: var(--color-suumo-muted);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-left: 4px solid var(--color-suumo);
+        padding-left: 0.65rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--color-ink);
+    }
+
+    .input-suumo {
+        width: 100%;
+        border: 1px solid var(--color-line);
+        background: #fff;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 2px;
+        outline: none;
+    }
+
+    .input-suumo:focus {
+        border-color: var(--color-suumo);
+        box-shadow: 0 0 0 2px rgb(105 179 45 / 18%);
+    }
+
+    .cassette {
+        display: grid;
+        gap: 1rem;
+        border: 1px solid var(--color-line);
+        background: var(--color-panel);
+        padding: 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .cassette {
+            grid-template-columns: 11rem 1fr;
+            gap: 1.25rem;
+            padding: 1.1rem 1.25rem;
+        }
+    }
+
+    .cassette-thumb {
+        position: relative;
+        display: flex;
+        min-height: 8.5rem;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(160deg, #dff3c4 0%, #f7f7f7 55%, #e8e8e8 100%);
+        border: 1px solid var(--color-line);
+        color: var(--color-suumo-dark);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .price-em {
+        color: var(--color-price);
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.1;
+    }
+
+    .spec-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+    }
+
+    .spec-table th,
+    .spec-table td {
+        border: 1px solid var(--color-line);
+        padding: 0.45rem 0.65rem;
+        vertical-align: top;
+    }
+
+    .spec-table th {
+        width: 7.5rem;
+        background: var(--color-suumo-muted);
+        font-weight: 700;
+        color: #444;
+        white-space: nowrap;
+    }
 }

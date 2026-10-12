@@ -1,11 +1,11 @@
 @php
     $styles = [
-        'safe' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
-        'caution' => 'bg-amber-50 text-amber-900 border-amber-200',
-        'danger' => 'bg-red-50 text-red-800 border-red-200',
+        'safe' => 'bg-suumo text-white border-suumo',
+        'caution' => 'bg-amber-400 text-amber-950 border-amber-500',
+        'danger' => 'bg-price text-white border-price',
     ];
     $labels = \App\Models\Simulation::STATUS_LABELS;
 @endphp
-<span class="inline-block border px-2 py-0.5 text-xs font-semibold {{ $styles[$status] ?? 'bg-stone-50 text-stone-700 border-stone-200' }}">
+<span class="inline-block border px-2 py-0.5 text-xs font-black {{ $styles[$status] ?? 'bg-gray-100 text-ink border-line' }}">
     {{ $labels[$status] ?? $status }}
 </span>

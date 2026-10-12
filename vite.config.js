@@ -9,11 +9,8 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Source Sans 3', {
-                    weights: [400, 500, 600, 700],
-                }),
-                bunny('Source Serif 4', {
-                    weights: [400, 600, 700],
+                bunny('Noto Sans JP', {
+                    weights: [400, 500, 700, 900],
                 }),
             ],
         }),

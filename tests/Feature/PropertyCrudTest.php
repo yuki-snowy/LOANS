@@ -99,7 +99,7 @@ class PropertyCrudTest extends TestCase
         $response = $this->get(route('properties.index'));
 
         $response->assertOk();
-        $response->assertSee('物件マップ');
+        $response->assertSee('地図から物件を探す');
         $response->assertSee('data-loans-map', false);
         $response->assertSee('地図一覧テスト');
     }
