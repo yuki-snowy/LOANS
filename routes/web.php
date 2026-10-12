@@ -5,7 +5,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\SimulationController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/properties');
+Route::view('/', 'home')->name('home');
 
 Route::get('/geocode/search', [GeocodeController::class, 'search'])->name('geocode.search');
 Route::get('/geocode/reverse', [GeocodeController::class, 'reverse'])->name('geocode.reverse');

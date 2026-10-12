@@ -12,7 +12,13 @@
         <div class="h-1 bg-suumo"></div>
         <header class="border-b border-line bg-white/95 shadow-sm backdrop-blur">
             <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-                <a href="{{ route('properties.index') }}" class="min-w-0">
+                <a href="{{ route('home') }}" class="inline-flex min-w-0 items-center gap-2" aria-label="LOAN'S トップへ">
+                    <span class="brand-mark" aria-hidden="true">
+                        <span class="brand-mark__cell is-a"></span>
+                        <span class="brand-mark__cell is-b"></span>
+                        <span class="brand-mark__cell is-c"></span>
+                        <span class="brand-mark__cell is-d"></span>
+                    </span>
                     <p class="text-2xl font-black tracking-tight text-suumo">LOAN'S</p>
                 </a>
                 {{-- PC: ヘッダーナビ / SP: 下部タブバーへ移動 --}}
@@ -49,7 +55,7 @@
 
     <footer class="mt-8 hidden border-t border-line bg-white md:block">
         <div class="mx-auto max-w-5xl px-4 py-6 text-center text-xs text-muted sm:px-6">
-            <p class="font-bold text-ink">LOAN'S</p>
+            <p class="font-bold text-ink"><a href="{{ route('home') }}" class="hover:text-suumo-dark">LOAN'S</a></p>
             <p class="mt-1">地図: <a href="https://maps.gsi.go.jp/development/ichiran.html" class="underline hover:text-suumo-dark" target="_blank" rel="noopener">国土地理院</a></p>
         </div>
     </footer>

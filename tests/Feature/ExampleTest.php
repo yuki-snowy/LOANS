@@ -2,14 +2,33 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    public function test_root_redirects_to_properties(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertRedirect('/properties');
+    public function test_home_page_is_displayed(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee("LOAN'S");
+        $response->assertSee('候補物件とローン');
+        $response->assertSee('候補物件へ');
+        $response->assertSee('ローンを試算');
+        $response->assertSee(route('home'), false);
+        $response->assertSee(route('properties.index'), false);
+        $response->assertSee(route('simulations.create'), false);
+    }
+
+    public function test_app_header_logo_links_to_home(): void
+    {
+        $response = $this->get(route('properties.index'));
+
+        $response->assertOk();
+        $response->assertSee('aria-label="LOAN\'S トップへ"', false);
+        $response->assertSee('href="'.route('home').'"', false);
     }
 }

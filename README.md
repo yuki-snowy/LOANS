@@ -76,6 +76,7 @@ php artisan serve
 
 | パス | 内容 |
 |------|------|
+| `/` | トップ |
 | `/properties` | 候補物件一覧 |
 | `/properties/create` | 物件追加 |
 | `/properties/{id}` | 物件詳細 |
