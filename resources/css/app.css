@@ -121,7 +121,7 @@
         flex-direction: column;
     }
 
-    /* 一覧: 常時3枠（大1 + 小2）。max で枠内に収める */
+    /* 一覧: 常時3枠。SPは大1+右小2 / PCは大1の下に小2横並び */
     .cassette-gallery {
         --cassette-gallery-max-w: 15rem;
         --cassette-gallery-max-h: 10rem;
@@ -138,14 +138,6 @@
         overflow: hidden;
         color: inherit;
         text-decoration: none;
-    }
-
-    @media (min-width: 640px) {
-        .cassette-gallery {
-            width: 100%;
-            justify-self: start;
-            align-self: start;
-        }
     }
 
     .cassette-gallery__badge {
@@ -176,6 +168,30 @@
 
     .cassette-gallery__item--side {
         grid-column: 2;
+    }
+
+    /* PC: 大1枚の下に 2・3 枚目を横並び */
+    @media (min-width: 640px) {
+        .cassette-gallery {
+            --cassette-gallery-max-w: 15rem;
+            --cassette-gallery-max-h: 15rem;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-rows: minmax(0, 2fr) minmax(0, 1fr);
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            justify-self: start;
+            align-self: start;
+        }
+
+        .cassette-gallery__item--main {
+            grid-column: 1 / -1;
+            grid-row: 1;
+        }
+
+        .cassette-gallery__item--side {
+            grid-column: auto;
+            grid-row: 2;
+        }
     }
 
     .cassette-gallery__item img {
