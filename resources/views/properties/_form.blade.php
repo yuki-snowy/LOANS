@@ -75,7 +75,7 @@
                 min="-90"
                 max="90"
                 class="w-full border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-700"
-                placeholder="35.6656820"
+                placeholder="35.6812360"
             >
         </div>
         <div>
@@ -89,9 +89,31 @@
                 min="-180"
                 max="180"
                 class="w-full border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-700"
-                placeholder="139.7120880"
+                placeholder="139.7671250"
             >
         </div>
+    </div>
+
+    @php
+        $mapLat = old('latitude', $property?->latitude);
+        $mapLng = old('longitude', $property?->longitude);
+    @endphp
+    <div>
+        <p class="mb-2 text-sm font-medium text-stone-700">地図で座標を指定</p>
+        <p class="mb-3 text-xs text-stone-500">
+            未入力時は東京駅周辺を初期表示します。地図をクリック、またはピンをドラッグして緯度・経度を設定できます（有料ジオコーディングAPIは未使用）。
+        </p>
+        <x-map
+            :latitude="$mapLat"
+            :longitude="$mapLng"
+            :title="old('name', $property?->name) ?: '座標ピン'"
+            :price="old('price', $property?->price)"
+            :interactive="true"
+            lat-input="latitude"
+            lng-input="longitude"
+            :zoom="filled($mapLat) && filled($mapLng) ? 15 : 13"
+            height="320px"
+        />
     </div>
 
     <div>

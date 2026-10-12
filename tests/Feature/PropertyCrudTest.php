@@ -82,7 +82,37 @@ class PropertyCrudTest extends TestCase
         $response->assertOk();
         $response->assertSee('詳細表示テスト');
         $response->assertSee('9,000');
-        $response->assertSee('property-map', false);
+        $response->assertSee('data-loans-map', false);
+        $response->assertSee('OpenStreetMap contributors (Cost: ¥0)', false);
+        $response->assertSee('35.665682', false);
+    }
+
+    #[Test]
+    public function index_renders_overview_map_for_geocoded_properties(): void
+    {
+        Property::factory()->create([
+            'name' => '地図一覧テスト',
+            'latitude' => 35.6812360,
+            'longitude' => 139.7671250,
+        ]);
+
+        $response = $this->get(route('properties.index'));
+
+        $response->assertOk();
+        $response->assertSee('物件マップ');
+        $response->assertSee('data-loans-map', false);
+        $response->assertSee('地図一覧テスト');
+    }
+
+    #[Test]
+    public function create_form_includes_interactive_map_picker(): void
+    {
+        $response = $this->get(route('properties.create'));
+
+        $response->assertOk();
+        $response->assertSee('data-interactive="1"', false);
+        $response->assertSee('data-lat-input="latitude"', false);
+        $response->assertSee('leaflet', false);
     }
 
     #[Test]

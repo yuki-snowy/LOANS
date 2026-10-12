@@ -19,6 +19,14 @@
 - 審査シグナル（安全 / 注意 / 危険）の色分け表示
 - PHPUnit（計算エッジケース + シミュレーションフロー）
 
+## Phase 3（実装済み）
+
+- Leaflet ＋ OpenStreetMap（CDN、APIキー不要）
+- 再利用可能な Blade コンポーネント `x-map` と `resources/js/loans-map.js`
+- 物件一覧の複数ピンマップ、詳細の単一ピン（物件名・価格ポップアップ）
+- 登録/編集時のインタラクティブ座標ピッカー（東京駅フォールバック）
+- 「Map data © OpenStreetMap contributors (Cost: ¥0)」表記
+
 ## 技術スタック
 
 - PHP 8.3+ / Laravel 13

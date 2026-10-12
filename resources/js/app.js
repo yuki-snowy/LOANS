@@ -1,1 +1,1 @@
-//
+import './loans-map.js';

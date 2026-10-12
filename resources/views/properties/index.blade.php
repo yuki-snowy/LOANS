@@ -6,7 +6,7 @@
     <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <h1 class="font-serif text-3xl text-stone-900">物件一覧</h1>
-            <p class="mt-1 text-sm text-stone-500">検討中の物件を登録・管理します。</p>
+            <p class="mt-1 text-sm text-stone-500">検討中の物件を登録・管理します。地図は Leaflet ＋ OpenStreetMap（無料）です。</p>
         </div>
         <a href="{{ route('properties.create') }}" class="inline-flex items-center justify-center bg-teal-800 px-4 py-2 text-sm text-white transition hover:bg-teal-700">
             物件を登録
@@ -22,6 +22,31 @@
             </a>
         </div>
     @else
+        @php
+            $mapMarkers = $properties->getCollection()
+                ->filter(fn ($property) => $property->hasCoordinates())
+                ->map(fn ($property) => [
+                    'latitude' => $property->latitude,
+                    'longitude' => $property->longitude,
+                    'title' => $property->name,
+                    'price' => $property->price,
+                    'url' => route('properties.show', $property),
+                ])
+                ->values();
+        @endphp
+
+        @if ($mapMarkers->isNotEmpty())
+            <section class="mb-6">
+                <div class="mb-2 flex items-end justify-between gap-3">
+                    <div>
+                        <h2 class="font-serif text-xl text-stone-900">物件マップ</h2>
+                        <p class="text-xs text-stone-500">座標登録済みの物件をピン表示（このページ分）</p>
+                    </div>
+                </div>
+                <x-map :markers="$mapMarkers" height="360px" :zoom="12" />
+            </section>
+        @endif
+
         <div class="overflow-x-auto border border-stone-200 bg-white">
             <table class="min-w-full text-left text-sm">
                 <thead class="border-b border-stone-200 bg-stone-100 text-xs uppercase tracking-wide text-stone-500">
@@ -31,6 +56,7 @@
                         <th class="px-4 py-3 font-medium">駅徒歩</th>
                         <th class="px-4 py-3 font-medium">評価</th>
                         <th class="px-4 py-3 font-medium">所在地</th>
+                        <th class="px-4 py-3 font-medium">地図</th>
                         <th class="px-4 py-3 font-medium"></th>
                     </tr>
                 </thead>
@@ -54,6 +80,13 @@
                                 @endif
                             </td>
                             <td class="max-w-xs truncate px-4 py-3 text-stone-600">{{ $property->address }}</td>
+                            <td class="px-4 py-3 text-stone-500">
+                                @if ($property->hasCoordinates())
+                                    <span class="text-teal-800">ピンあり</span>
+                                @else
+                                    <span class="text-stone-400">未設定</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-right">
                                 <a href="{{ route('properties.edit', $property) }}" class="text-teal-800 hover:underline">編集</a>
                             </td>

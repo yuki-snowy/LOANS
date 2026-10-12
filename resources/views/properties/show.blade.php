@@ -2,10 +2,6 @@
 
 @section('title', $property->name)
 
-@push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-@endpush
-
 @section('content')
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -59,35 +55,26 @@
 
         <div class="border border-stone-200 bg-white">
             @if ($property->hasCoordinates())
-                <div id="property-map" class="h-80 w-full lg:h-full lg:min-h-80"></div>
+                <x-map
+                    :latitude="$property->latitude"
+                    :longitude="$property->longitude"
+                    :title="$property->name"
+                    :price="$property->price"
+                    height="100%"
+                    class="h-80 lg:h-full lg:min-h-80"
+                />
             @else
-                <div class="flex h-80 items-center justify-center px-6 text-center text-sm text-stone-500 lg:min-h-80">
-                    緯度・経度が未設定のため地図を表示できません。
+                <div class="p-4">
+                    <p class="mb-3 text-sm text-stone-500">緯度・経度が未設定のため、東京駅周辺をフォールバック表示しています。編集画面で地図上のピンを調整できます。</p>
+                    <x-map
+                        :latitude="35.681236"
+                        :longitude="139.767125"
+                        title="東京駅（デフォルト中心）"
+                        :zoom="13"
+                        height="320px"
+                    />
                 </div>
             @endif
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    @if ($property->hasCoordinates())
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const lat = {{ $property->latitude }};
-                const lng = {{ $property->longitude }};
-                const map = L.map('property-map').setView([lat, lng], 15);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                }).addTo(map);
-
-                L.marker([lat, lng])
-                    .addTo(map)
-                    .bindPopup(@json($property->name))
-                    .openPopup();
-            });
-        </script>
-    @endif
-@endpush
