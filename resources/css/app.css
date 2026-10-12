@@ -114,7 +114,9 @@
     .cassette-thumb {
         position: relative;
         display: flex;
-        min-height: 8.5rem;
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        max-width: 11rem;
         align-items: center;
         justify-content: center;
         overflow: hidden;
@@ -124,6 +126,21 @@
         font-size: 0.75rem;
         font-weight: 700;
         letter-spacing: 0.04em;
+    }
+
+    .property-photo {
+        display: block;
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+
+    .property-photo img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     .price-em {

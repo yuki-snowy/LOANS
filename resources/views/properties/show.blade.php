@@ -37,14 +37,16 @@
 
     <section class="mb-4 border border-line bg-white">
         <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">物件画像</h2>
-        @if ($property->images->isNotEmpty())
+        @php
+            $availableImages = $property->images->filter(fn ($image) => $image->isAvailable())->values();
+        @endphp
+        @if ($availableImages->isNotEmpty())
             <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 lg:grid-cols-4">
-                @foreach ($property->images as $image)
-                    <a href="{{ $image->url() }}" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden border border-line bg-suumo-muted">
+                @foreach ($availableImages as $image)
+                    <a href="{{ $image->url() }}" target="_blank" rel="noopener noreferrer" class="property-photo group border border-line transition hover:opacity-90">
                         <img
                             src="{{ $image->url() }}"
                             alt="{{ $property->name }} 画像{{ $loop->iteration }}"
-                            class="aspect-[4/3] h-full w-full object-cover transition group-hover:opacity-90"
                             loading="{{ $loop->first ? 'eager' : 'lazy' }}"
                             decoding="async"
                         >

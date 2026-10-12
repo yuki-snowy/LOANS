@@ -85,7 +85,7 @@ class PropertyCrudTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('画像付き物件');
-        $response->assertSee(Storage::disk('public')->url($path), false);
+        $response->assertSee('src="/storage/'.$path.'"', false);
         $response->assertDontSee('>NO IMAGE<', false);
     }
 

@@ -58,8 +58,8 @@
                         @if ($property->evaluation)
                             <span class="absolute left-3 top-3 z-10 bg-suumo px-1.5 py-0.5 text-[10px] font-black text-white">評価{{ $property->evaluation }}</span>
                         @endif
-                        @if ($property->coverImage)
-                            <img src="{{ $property->coverImage->url() }}" alt="{{ $property->name }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async">
+                        @if ($property->coverImage?->isAvailable())
+                            <img src="{{ $property->coverImage->url() }}" alt="{{ $property->name }}" class="absolute inset-0 h-full w-full object-cover object-center" loading="lazy" decoding="async">
                         @else
                             <span class="relative">NO IMAGE</span>
                         @endif

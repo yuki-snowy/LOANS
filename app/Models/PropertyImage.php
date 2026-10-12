@@ -32,8 +32,31 @@ class PropertyImage extends Model
         return $this->belongsTo(Property::class);
     }
 
+    /**
+     * 公開URL（ホスト依存を避けるためルート相対）。
+     * 実ファイルが無い場合は空文字（リンク切れ表示を防ぐ）。
+     */
     public function url(): string
     {
-        return Storage::disk('public')->url($this->path);
+        $path = $this->normalizedPath();
+        if ($path === '' || ! Storage::disk('public')->exists($path)) {
+            return '';
+        }
+
+        return '/storage/'.$path;
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->url() !== '';
+    }
+
+    private function normalizedPath(): string
+    {
+        if (! is_string($this->path) || $this->path === '') {
+            return '';
+        }
+
+        return ltrim(str_replace('\\', '/', $this->path), '/');
     }
 }

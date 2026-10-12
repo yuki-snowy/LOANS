@@ -220,8 +220,9 @@
                 <p class="mb-2 text-sm font-bold text-ink">登録済み画像</p>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                     @foreach ($property->images as $image)
+                        @continue(! $image->isAvailable())
                         <label class="image-tile relative">
-                            <img src="{{ $image->url() }}" alt="登録画像 {{ $loop->iteration }}" class="h-full w-full object-cover">
+                            <img src="{{ $image->url() }}" alt="登録画像 {{ $loop->iteration }}" class="h-full w-full object-cover object-center">
                             <span class="absolute inset-x-0 bottom-0 bg-black/55 px-1 py-1 text-center text-[10px] font-bold text-white">
                                 <input type="checkbox" name="delete_images[]" value="{{ $image->id }}" class="align-middle accent-white">
                                 削除
