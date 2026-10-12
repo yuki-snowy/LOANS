@@ -121,19 +121,18 @@
         flex-direction: column;
     }
 
-    /* 一覧: 常時3枠。SPは大1+右小2 / PCは大1の下に小2横並び */
+    /* 一覧: 常時3枠。SPは大1+右小2 / PCは大1の下に小2横並び（いずれも正方形） */
     .cassette-gallery {
         --cassette-gallery-max-w: 15rem;
-        --cassette-gallery-max-h: 10rem;
+        --cassette-gallery-gap: 0.35rem;
         position: relative;
         display: grid;
         grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
         grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-        gap: 0.35rem;
+        gap: var(--cassette-gallery-gap);
         width: 100%;
         max-width: var(--cassette-gallery-max-w);
-        height: auto;
-        max-height: var(--cassette-gallery-max-h);
+        /* 大(2s+g) × 高(2s+g) 相当 → 正方形セルが収まる 3:2 */
         aspect-ratio: 3 / 2;
         overflow: hidden;
         color: inherit;
@@ -159,6 +158,7 @@
         overflow: hidden;
         border: 1px solid var(--color-line);
         background: #f0f0f0;
+        aspect-ratio: 1 / 1;
     }
 
     .cassette-gallery__item--main {
@@ -170,14 +170,15 @@
         grid-column: 2;
     }
 
-    /* PC: 大1枚の下に 2・3 枚目を横並び */
+    /* PC: 大1（正方形）の下に 2・3 枚目（正方形）を横並び */
     @media (min-width: 640px) {
         .cassette-gallery {
-            --cassette-gallery-max-w: 15rem;
-            --cassette-gallery-max-h: 15rem;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            grid-template-rows: minmax(0, 2fr) minmax(0, 1fr);
-            aspect-ratio: 1 / 1;
+            grid-template-rows: auto auto;
+            /* 幅 W に対し高さ = W + gap + (W-gap)/2 ≈ 1.5W */
+            aspect-ratio: auto;
+            height: auto;
+            max-height: none;
             width: 100%;
             justify-self: start;
             align-self: start;
@@ -186,11 +187,15 @@
         .cassette-gallery__item--main {
             grid-column: 1 / -1;
             grid-row: 1;
+            width: 100%;
+            aspect-ratio: 1 / 1;
         }
 
         .cassette-gallery__item--side {
             grid-column: auto;
             grid-row: 2;
+            width: 100%;
+            aspect-ratio: 1 / 1;
         }
     }
 
