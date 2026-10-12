@@ -87,7 +87,7 @@
                     </a>
 
                     <div class="cassette-body min-w-0">
-                        <div class="flex flex-wrap items-start justify-between gap-2">
+                        <div class="cassette-body__head flex flex-wrap items-start justify-between gap-2">
                             <h2 class="min-w-0 truncate text-base font-bold leading-snug sm:text-lg">
                                 <a href="{{ route('properties.show', $property) }}" class="text-ink hover:text-suumo-dark hover:underline">
                                     {{ $property->name }}
@@ -96,12 +96,12 @@
                             <a href="{{ route('properties.edit', $property) }}" class="btn-suumo-outline shrink-0 text-xs">編集</a>
                         </div>
 
-                        <p class="price-em mt-2 text-2xl sm:text-3xl">
+                        <p class="cassette-body__price price-em text-2xl sm:text-3xl">
                             {{ number_format($property->price) }}
                             <span class="text-base font-bold">万円</span>
                         </p>
 
-                        <table class="spec-table mt-3">
+                        <table class="cassette-body__specs spec-table">
                             <tbody>
                                 <tr>
                                     <th>所在地</th>
@@ -132,7 +132,7 @@
                             </tbody>
                         </table>
 
-                        <div class="mt-3 flex flex-wrap gap-2">
+                        <div class="cassette-body__actions flex flex-wrap gap-2">
                             <a href="{{ route('properties.show', $property) }}" class="btn-suumo text-xs">詳細を見る</a>
                             <a href="{{ route('simulations.create', ['property_id' => $property->id]) }}" class="btn-suumo-outline text-xs">ローンを試算</a>
                         </div>

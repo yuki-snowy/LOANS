@@ -112,6 +112,8 @@
             grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
             gap: 1.25rem;
             padding: 1.1rem 1.25rem;
+            /* 画像高さを基準に右カラムを伸ばす */
+            align-items: stretch;
         }
     }
 
@@ -119,6 +121,30 @@
         display: flex;
         min-width: 0;
         flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .cassette-body__price,
+    .cassette-body__specs,
+    .cassette-body__actions {
+        margin: 0;
+    }
+
+    /* PC: テキスト側の余白を配分して画像列の高さに揃える */
+    @media (min-width: 640px) {
+        .cassette-body {
+            height: 100%;
+            min-height: 100%;
+            justify-content: space-between;
+            gap: 0;
+        }
+
+        .cassette-body__head,
+        .cassette-body__price,
+        .cassette-body__specs,
+        .cassette-body__actions {
+            flex-shrink: 0;
+        }
     }
 
     /* 一覧: 常時3枠。SPは大1+右小2 / PCは大1の下に小2横並び（各枠 1:1） */
