@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Source Sans 3', 'Hiragino Sans', 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Source Serif 4', 'Hiragino Mincho ProN', 'Noto Serif JP', ui-serif, Georgia, serif;
+}
