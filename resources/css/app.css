@@ -99,16 +99,17 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
-        align-items: stretch;
+        align-items: start;
         border: 1px solid var(--color-line);
         background: var(--color-panel);
         padding: 1rem;
+        overflow: hidden;
     }
 
     @media (min-width: 640px) {
         .cassette {
-            /* 左: 大1+小2の正方形群 / 右: テキスト。高さはテキスト側に合わせる */
-            grid-template-columns: auto 1fr;
+            /* 左ギャラリーは最大幅を固定し、はみ出しを防止 */
+            grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
             gap: 1.25rem;
             padding: 1.1rem 1.25rem;
         }
@@ -120,14 +121,19 @@
         flex-direction: column;
     }
 
-    /* 一覧: 常時3枠（大1 + 小2）。高さは右カラムに合わせ、正方形が枠に収まる */
+    /* 一覧: 常時3枠（大1 + 小2）。max で枠内に収める */
     .cassette-gallery {
+        --cassette-gallery-max-w: 15rem;
+        --cassette-gallery-max-h: 10rem;
         position: relative;
         display: grid;
-        grid-template-columns: 2fr 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
         gap: 0.35rem;
         width: 100%;
+        max-width: var(--cassette-gallery-max-w);
+        height: auto;
+        max-height: var(--cassette-gallery-max-h);
         aspect-ratio: 3 / 2;
         overflow: hidden;
         color: inherit;
@@ -136,11 +142,9 @@
 
     @media (min-width: 640px) {
         .cassette-gallery {
-            width: auto;
-            height: 100%;
-            min-height: 12rem;
-            aspect-ratio: 3 / 2;
+            width: 100%;
             justify-self: start;
+            align-self: start;
         }
     }
 
@@ -176,8 +180,10 @@
 
     .cassette-gallery__item img {
         display: block;
-        height: 100%;
         width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: cover;
         object-position: center;
     }
@@ -208,18 +214,26 @@
         object-position: center;
     }
 
-    /* 詳細: 常時3枠（大1 + 小2）。欠ける枠は NO IMAGE */
+    /* 詳細: 常時3枠（大1 + 小2）。欠ける枠は NO IMAGE。max で枠内に収める */
     .property-gallery {
+        --property-gallery-max-w: 36rem;
+        --property-gallery-max-h: 22rem;
         display: grid;
         gap: 0.5rem;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: var(--property-gallery-max-w);
+        max-height: var(--property-gallery-max-h);
+        aspect-ratio: 3 / 2;
         padding: 1rem;
         grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-        grid-template-rows: repeat(2, minmax(0, 1fr));
-        min-height: 16rem;
+        grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+        overflow: hidden;
     }
 
     .property-gallery__item {
         display: block;
+        min-width: 0;
         min-height: 0;
         overflow: hidden;
         border: 1px solid var(--color-line);
@@ -236,17 +250,18 @@
     .property-gallery__item--main {
         grid-column: 1;
         grid-row: 1 / span 2;
-        aspect-ratio: 1 / 1;
     }
 
     .property-gallery__item--side {
-        aspect-ratio: 1 / 1;
+        grid-column: 2;
     }
 
     .property-gallery__item img {
         display: block;
-        height: 100%;
         width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: cover;
         object-position: center;
     }
@@ -264,7 +279,7 @@
 
     @media (max-width: 639px) {
         .property-gallery {
-            min-height: 12rem;
+            --property-gallery-max-h: 14rem;
             gap: 0.35rem;
             padding: 0.75rem;
         }
@@ -303,10 +318,20 @@
         aspect-ratio: 1 / 1;
         width: 100%;
         max-width: 12rem;
-        min-height: 7.5rem;
+        max-height: 12rem;
         overflow: hidden;
         border: 1.5px solid var(--color-line);
         background: #fafafa;
+    }
+
+    .image-tile img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     .image-tile-add {
