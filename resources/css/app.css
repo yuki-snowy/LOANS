@@ -143,6 +143,80 @@
         object-position: center;
     }
 
+    /* 詳細: 大1枚 + 小2枚（右列で隙間を埋める） */
+    .property-gallery {
+        display: grid;
+        gap: 0.5rem;
+        padding: 1rem;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+        min-height: 16rem;
+    }
+
+    .property-gallery__item {
+        display: block;
+        min-height: 0;
+        overflow: hidden;
+        border: 1px solid var(--color-line);
+        background: #f0f0f0;
+        transition: opacity 0.15s ease;
+    }
+
+    .property-gallery__item:hover,
+    .property-gallery__item:focus-visible {
+        opacity: 0.92;
+        outline: none;
+    }
+
+    .property-gallery__item--main {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        aspect-ratio: 1 / 1;
+    }
+
+    .property-gallery__item--side {
+        aspect-ratio: 1 / 1;
+    }
+
+    .property-gallery__item img {
+        display: block;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .property-gallery--count-1 {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+
+    .property-gallery--count-1 .property-gallery__item--main {
+        grid-row: auto;
+        max-width: 28rem;
+    }
+
+    .property-gallery--count-2 {
+        grid-template-rows: 1fr;
+    }
+
+    .property-gallery--count-2 .property-gallery__item--main {
+        grid-row: auto;
+    }
+
+    .property-gallery--count-2 .property-gallery__item--side {
+        grid-row: 1;
+        grid-column: 2;
+    }
+
+    @media (max-width: 639px) {
+        .property-gallery {
+            min-height: 12rem;
+            gap: 0.35rem;
+            padding: 0.75rem;
+        }
+    }
+
     .price-em {
         color: var(--color-price);
         font-weight: 800;

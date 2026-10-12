@@ -38,12 +38,20 @@
     <section class="mb-4 border border-line bg-white">
         <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">物件画像</h2>
         @php
-            $availableImages = $property->images->filter(fn ($image) => $image->isAvailable())->values();
+            $galleryImages = $property->images
+                ->filter(fn ($image) => $image->isAvailable())
+                ->take(3)
+                ->values();
         @endphp
-        @if ($availableImages->isNotEmpty())
-            <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 lg:grid-cols-4">
-                @foreach ($availableImages as $image)
-                    <a href="{{ $image->url() }}" target="_blank" rel="noopener noreferrer" class="property-photo group border border-line transition hover:opacity-90">
+        @if ($galleryImages->isNotEmpty())
+            <div class="property-gallery property-gallery--count-{{ $galleryImages->count() }}" data-property-gallery>
+                @foreach ($galleryImages as $image)
+                    <a
+                        href="{{ $image->url() }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="property-gallery__item {{ $loop->first ? 'property-gallery__item--main' : 'property-gallery__item--side' }}"
+                    >
                         <img
                             src="{{ $image->url() }}"
                             alt="{{ $property->name }} 画像{{ $loop->iteration }}"

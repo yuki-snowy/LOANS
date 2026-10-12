@@ -130,6 +130,9 @@ class PropertyCrudTest extends TestCase
         $show = $this->get(route('properties.show', $property));
         $show->assertOk();
         $show->assertSee('物件画像');
+        $show->assertSee('data-property-gallery', false);
+        $show->assertSee('property-gallery--count-2', false);
+        $show->assertSee('property-gallery__item--main', false);
         $show->assertDontSee('NO IMAGE');
     }
 
