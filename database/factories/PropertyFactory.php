@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Property;
+use App\Support\PropertyOptions;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -34,7 +35,12 @@ class PropertyFactory extends Factory
             'address' => $city.fake()->streetAddress(),
             'latitude' => fake()->optional(0.8)->latitude(35.6, 35.75),
             'longitude' => fake()->optional(0.8)->longitude(139.65, 139.8),
-            'station_minutes' => fake()->numberBetween(1, 20),
+            'station_minutes' => fake()->randomElement(PropertyOptions::stationMinutes()),
+            'floor_plan' => fake()->randomElement(PropertyOptions::FLOOR_PLANS),
+            'built_year' => fake()->numberBetween(1985, (int) date('Y')),
+            'exclusive_area' => fake()->randomFloat(2, 25, 120),
+            'structure' => fake()->randomElement(PropertyOptions::STRUCTURES),
+            'building_floors' => fake()->numberBetween(3, 30),
             'evaluation' => fake()->optional(0.7)->randomElement(Property::EVALUATIONS),
             'memo' => fake()->optional(0.5)->realText(80),
         ];

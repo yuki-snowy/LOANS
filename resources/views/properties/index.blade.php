@@ -46,12 +46,17 @@
 
         <div class="space-y-3">
             @foreach ($properties as $property)
+                @php $cover = $property->coverImage(); @endphp
                 <article class="cassette transition hover:border-suumo">
                     <a href="{{ route('properties.show', $property) }}" class="cassette-thumb">
                         @if ($property->evaluation)
                             <span class="absolute left-3 top-3 z-10 bg-suumo px-1.5 py-0.5 text-[10px] font-black text-white">評価{{ $property->evaluation }}</span>
                         @endif
-                        <span class="relative">NO IMAGE</span>
+                        @if ($cover)
+                            <img src="{{ $cover->url() }}" alt="{{ $property->name }}" class="absolute inset-0 h-full w-full object-cover">
+                        @else
+                            <span class="relative">NO IMAGE</span>
+                        @endif
                     </a>
 
                     <div class="min-w-0">
@@ -76,16 +81,20 @@
                                     <td>{{ $property->fullAddress() }}</td>
                                 </tr>
                                 <tr>
+                                    <th>間取り</th>
+                                    <td>{{ $property->floor_plan ?? '—' }}</td>
+                                </tr>
+                                <tr>
                                     <th>駅徒歩</th>
                                     <td>{{ $property->station_minutes }}分</td>
                                 </tr>
                                 <tr>
-                                    <th>地図</th>
+                                    <th>専有面積</th>
                                     <td>
-                                        @if ($property->hasCoordinates())
-                                            <span class="font-bold text-suumo-dark">ピン登録あり</span>
+                                        @if ($property->exclusive_area)
+                                            {{ number_format((float) $property->exclusive_area, 2) }}㎡
                                         @else
-                                            <span class="text-muted">未設定</span>
+                                            —
                                         @endif
                                     </td>
                                 </tr>

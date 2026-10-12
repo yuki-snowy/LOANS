@@ -34,6 +34,11 @@ class PropertyValidationTest extends TestCase
             'latitude' => 35.6656820,
             'longitude' => 139.7120880,
             'station_minutes' => 5,
+            'floor_plan' => '3LDK',
+            'built_year' => 2015,
+            'exclusive_area' => 78.45,
+            'structure' => 'RC造',
+            'building_floors' => 24,
             'evaluation' => 'A',
             'memo' => '南向き・眺望良好',
         ], $overrides);
@@ -46,6 +51,7 @@ class PropertyValidationTest extends TestCase
 
         $this->assertSame('パークタワー青山 1203号室', $validated['name']);
         $this->assertSame(8500, $validated['price']);
+        $this->assertSame('3LDK', $validated['floor_plan']);
         $this->assertSame('A', $validated['evaluation']);
     }
 
@@ -57,6 +63,7 @@ class PropertyValidationTest extends TestCase
             'longitude' => null,
             'evaluation' => null,
             'memo' => null,
+            'postal_code' => null,
         ]));
 
         $this->assertNull($validated['latitude']);
@@ -90,6 +97,11 @@ class PropertyValidationTest extends TestCase
             'prefecture missing' => [['prefecture' => ''], 'prefecture'],
             'prefecture invalid' => [['prefecture' => '東京'], 'prefecture'],
             'postal code invalid' => [['postal_code' => '123'], 'postal_code'],
+            'floor plan invalid' => [['floor_plan' => '10LDK'], 'floor_plan'],
+            'structure invalid' => [['structure' => '石造'], 'structure'],
+            'built year too old' => [['built_year' => 1800], 'built_year'],
+            'exclusive area zero' => [['exclusive_area' => 0], 'exclusive_area'],
+            'building floors zero' => [['building_floors' => 0], 'building_floors'],
             'latitude out of range' => [['latitude' => 91], 'latitude'],
             'longitude out of range' => [['longitude' => -181], 'longitude'],
             'station minutes negative' => [['station_minutes' => -1], 'station_minutes'],

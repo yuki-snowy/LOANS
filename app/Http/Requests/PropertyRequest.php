@@ -17,7 +17,7 @@ class PropertyRequest extends FormRequest
      */
     public function rules(): array
     {
-        return Property::rules();
+        return array_merge(Property::rules(), Property::imageRules());
     }
 
     /**
@@ -28,12 +28,16 @@ class PropertyRequest extends FormRequest
         return Property::attributeLabels();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     protected function prepareForValidation(): void
     {
-        $nullableNumeric = ['latitude', 'longitude'];
+        $nullableNumeric = [
+            'latitude',
+            'longitude',
+            'exclusive_area',
+            'built_year',
+            'building_floors',
+            'station_minutes',
+        ];
 
         foreach ($nullableNumeric as $field) {
             if ($this->has($field) && $this->input($field) === '') {
@@ -53,6 +57,14 @@ class PropertyRequest extends FormRequest
             $this->merge(['postal_code' => null]);
         }
 
+        if ($this->has('floor_plan') && $this->input('floor_plan') === '') {
+            $this->merge(['floor_plan' => null]);
+        }
+
+        if ($this->has('structure') && $this->input('structure') === '') {
+            $this->merge(['structure' => null]);
+        }
+
         if ($this->filled('postal_code')) {
             $digits = preg_replace('/\D/', '', (string) $this->input('postal_code')) ?? '';
             if (strlen($digits) === 7) {
@@ -60,6 +72,10 @@ class PropertyRequest extends FormRequest
                     'postal_code' => substr($digits, 0, 3).'-'.substr($digits, 3),
                 ]);
             }
+        }
+
+        if (! $this->has('delete_images')) {
+            $this->merge(['delete_images' => []]);
         }
     }
 }

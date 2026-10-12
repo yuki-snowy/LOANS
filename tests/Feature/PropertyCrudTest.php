@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Property;
+use App\Models\PropertyImage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -25,9 +28,22 @@ class PropertyCrudTest extends TestCase
             'latitude' => 35.6335600,
             'longitude' => 139.7157800,
             'station_minutes' => 7,
+            'floor_plan' => '2LDK',
+            'built_year' => 2008,
+            'exclusive_area' => 58.20,
+            'structure' => 'SRC造',
+            'building_floors' => 12,
             'evaluation' => 'B',
             'memo' => '駅近・リフォーム済',
         ], $overrides);
+    }
+
+    private function sampleImage(string $name = 'sample.jpg'): UploadedFile
+    {
+        return UploadedFile::fake()->createWithContent(
+            $name,
+            file_get_contents(base_path('tests/fixtures/sample.jpg'))
+        );
     }
 
     #[Test]
@@ -42,9 +58,31 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('表示確認用マンション');
         $response->assertSee("LOAN'S");
         $response->assertSee('物件を追加');
+        $response->assertSee('NO IMAGE');
         $response->assertDontSee('物件を探す');
         $response->assertDontSee('物件を掲載');
         $response->assertDontSee('中古マンション');
+    }
+
+    #[Test]
+    public function index_shows_cover_image_when_present(): void
+    {
+        Storage::fake('public');
+
+        $property = Property::factory()->create(['name' => '画像付き物件']);
+        $path = $this->sampleImage()->store('properties/'.$property->id, 'public');
+        PropertyImage::query()->create([
+            'property_id' => $property->id,
+            'path' => $path,
+            'sort_order' => 0,
+        ]);
+
+        $response = $this->get(route('properties.index'));
+
+        $response->assertOk();
+        $response->assertSee('画像付き物件');
+        $response->assertSee(Storage::disk('public')->url($path), false);
+        $response->assertDontSee('>NO IMAGE<', false);
     }
 
     #[Test]
@@ -59,8 +97,35 @@ class PropertyCrudTest extends TestCase
             'postal_code' => '153-0064',
             'prefecture' => '東京都',
             'address' => '目黒区下目黒1-1-1',
+            'floor_plan' => '2LDK',
+            'built_year' => 2008,
+            'structure' => 'SRC造',
+            'building_floors' => 12,
             'evaluation' => 'B',
         ]);
+    }
+
+    #[Test]
+    public function store_accepts_multiple_images(): void
+    {
+        Storage::fake('public');
+
+        $response = $this->post(route('properties.store'), $this->validPayload([
+            'images' => [
+                $this->sampleImage('one.jpg'),
+                $this->sampleImage('two.jpg'),
+            ],
+        ]));
+
+        $property = Property::query()->first();
+        $this->assertNotNull($property);
+        $response->assertRedirect(route('properties.show', $property));
+        $this->assertDatabaseCount('property_images', 2);
+
+        $show = $this->get(route('properties.show', $property));
+        $show->assertOk();
+        $show->assertSee('物件画像');
+        $show->assertDontSee('NO IMAGE');
     }
 
     #[Test]
@@ -70,10 +135,11 @@ class PropertyCrudTest extends TestCase
             ->post(route('properties.store'), $this->validPayload([
                 'price' => 0,
                 'evaluation' => 'Z',
+                'floor_plan' => 'invalid',
             ]));
 
         $response->assertRedirect(route('properties.create'));
-        $response->assertSessionHasErrors(['price', 'evaluation']);
+        $response->assertSessionHasErrors(['price', 'evaluation', 'floor_plan']);
         $this->assertDatabaseCount('properties', 0);
     }
 
@@ -83,6 +149,11 @@ class PropertyCrudTest extends TestCase
         $property = Property::factory()->create([
             'name' => '詳細表示テスト',
             'price' => 9000,
+            'floor_plan' => '3LDK',
+            'built_year' => 2012,
+            'exclusive_area' => 70.5,
+            'structure' => 'RC造',
+            'building_floors' => 15,
             'latitude' => 35.6656820,
             'longitude' => 139.7120880,
         ]);
@@ -92,6 +163,9 @@ class PropertyCrudTest extends TestCase
         $response->assertOk();
         $response->assertSee('詳細表示テスト');
         $response->assertSee('9,000');
+        $response->assertSee('3LDK');
+        $response->assertSee('2012年');
+        $response->assertSee('RC造 / 15階建');
         $response->assertSee('data-loans-map', false);
         $response->assertSee('35.665682', false);
     }
@@ -123,7 +197,15 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('物件を追加');
         $response->assertSee('郵便番号');
         $response->assertSee('都道府県');
+        $response->assertSee('間取り');
+        $response->assertSee('築年');
+        $response->assertSee('専有面積');
+        $response->assertSee('構造');
+        $response->assertSee('階建て');
+        $response->assertSee('画像（複数可）');
         $response->assertSee('data-postal-autofill', false);
+        $response->assertSee('data-image-upload', false);
+        $response->assertSee('sm:grid-cols-2', false);
         $response->assertSee('data-interactive="1"', false);
         $response->assertSee('data-lat-input="latitude"', false);
         $response->assertSee('leaflet', false);
@@ -150,6 +232,7 @@ class PropertyCrudTest extends TestCase
         $response = $this->put(route('properties.update', $property), $this->validPayload([
             'name' => '更新後名称',
             'price' => 7100,
+            'floor_plan' => '3LDK',
         ]));
 
         $response->assertRedirect(route('properties.show', $property));
@@ -157,6 +240,7 @@ class PropertyCrudTest extends TestCase
             'id' => $property->id,
             'name' => '更新後名称',
             'price' => 7100,
+            'floor_plan' => '3LDK',
         ]);
     }
 

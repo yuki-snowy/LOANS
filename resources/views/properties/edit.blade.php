@@ -7,7 +7,7 @@
         <h1 class="section-title">物件情報を編集</h1>
     </div>
 
-    <form method="POST" action="{{ route('properties.update', $property) }}" class="max-w-2xl border border-line bg-white p-5 sm:p-6">
+    <form method="POST" action="{{ route('properties.update', $property) }}" enctype="multipart/form-data" class="max-w-2xl border border-line bg-white p-5 sm:p-6">
         @csrf
         @method('PUT')
         @include('properties._form')

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\Prefectures;
+use App\Support\PropertyOptions;
 use Database\Factories\PropertyFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,11 @@ use Illuminate\Validation\Rule;
     'latitude',
     'longitude',
     'station_minutes',
+    'floor_plan',
+    'built_year',
+    'exclusive_area',
+    'structure',
+    'building_floors',
     'evaluation',
     'memo',
 ])]
@@ -34,6 +40,8 @@ class Property extends Model
      */
     public static function rules(): array
     {
+        $currentYear = (int) date('Y');
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'integer', 'min:1', 'max:999999'],
@@ -42,9 +50,27 @@ class Property extends Model
             'address' => ['required', 'string', 'max:255'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'station_minutes' => ['required', 'integer', 'min:0', 'max:120'],
+            'station_minutes' => ['required', 'integer', Rule::in(PropertyOptions::stationMinutes())],
+            'floor_plan' => ['required', 'string', Rule::in(PropertyOptions::FLOOR_PLANS)],
+            'built_year' => ['required', 'integer', 'min:1950', 'max:'.$currentYear],
+            'exclusive_area' => ['required', 'numeric', 'min:1', 'max:9999.99'],
+            'structure' => ['required', 'string', Rule::in(PropertyOptions::STRUCTURES)],
+            'building_floors' => ['required', 'integer', 'min:1', 'max:60'],
             'evaluation' => ['nullable', 'string', Rule::in(self::EVALUATIONS)],
             'memo' => ['nullable', 'string', 'max:5000'],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function imageRules(): array
+    {
+        return [
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'delete_images' => ['nullable', 'array'],
+            'delete_images.*' => ['integer', 'exists:property_images,id'],
         ];
     }
 
@@ -62,8 +88,16 @@ class Property extends Model
             'latitude' => '緯度',
             'longitude' => '経度',
             'station_minutes' => '駅徒歩（分）',
+            'floor_plan' => '間取り',
+            'built_year' => '築年',
+            'exclusive_area' => '専有面積（㎡）',
+            'structure' => '構造',
+            'building_floors' => '階建て',
             'evaluation' => '評価',
             'memo' => 'メモ',
+            'images' => '画像',
+            'images.*' => '画像',
+            'delete_images' => '削除画像',
         ];
     }
 
@@ -77,6 +111,9 @@ class Property extends Model
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'station_minutes' => 'integer',
+            'built_year' => 'integer',
+            'exclusive_area' => 'decimal:2',
+            'building_floors' => 'integer',
         ];
     }
 
@@ -106,6 +143,33 @@ class Property extends Model
         $line = trim(($this->prefecture ?? '').$this->address);
 
         return $postal ? '〒'.$postal.' '.$line : $line;
+    }
+
+    public function structureLabel(): string
+    {
+        $parts = array_filter([
+            $this->structure,
+            $this->building_floors ? $this->building_floors.'階建' : null,
+        ]);
+
+        return $parts !== [] ? implode(' / ', $parts) : '—';
+    }
+
+    public function coverImage(): ?PropertyImage
+    {
+        if ($this->relationLoaded('images')) {
+            return $this->images->sortBy('sort_order')->first();
+        }
+
+        return $this->images()->orderBy('sort_order')->first();
+    }
+
+    /**
+     * @return HasMany<PropertyImage, $this>
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class)->orderBy('sort_order')->orderBy('id');
     }
 
     /**

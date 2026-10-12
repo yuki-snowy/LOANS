@@ -68,9 +68,9 @@ php artisan test
 
 | パス | 説明 |
 |------|------|
-| `/properties` | 候補物件一覧 |
-| `/properties/create` | 物件を追加（郵便番号から住所自動入力） |
-| `/properties/{id}` | 物件詳細（地図表示） |
+| `/properties` | 候補物件一覧（1枚目画像 / NO IMAGE） |
+| `/properties/create` | 物件を追加（間取り・築年・画像複数・郵便番号自動入力） |
+| `/properties/{id}` | 物件詳細（画像閲覧・地図表示） |
 | `/properties/{id}/edit` | 物件編集 |
 | `/simulations` | シミュレーション履歴 |
 | `/simulations/create` | ローン試算・審査判定 |

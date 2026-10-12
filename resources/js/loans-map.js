@@ -141,12 +141,25 @@ export function initMapElement(el) {
         const lngInput = lngInputId ? document.getElementById(lngInputId) : null;
         let pickerMarker = leafletMarkers[0] || null;
 
-        const syncInputs = (lat, lng) => {
+        const emitCoordinates = (lat, lng) => {
+            const formRoot = el.closest('[data-property-form]') || document;
+            formRoot.dispatchEvent(
+                new CustomEvent('loans:coordinates', {
+                    bubbles: true,
+                    detail: { latitude: lat, longitude: lng },
+                }),
+            );
+        };
+
+        const syncInputs = (lat, lng, { emit = true } = {}) => {
             if (latInput) {
                 latInput.value = lat.toFixed(7);
             }
             if (lngInput) {
                 lngInput.value = lng.toFixed(7);
+            }
+            if (emit) {
+                emitCoordinates(lat, lng);
             }
         };
 
@@ -174,7 +187,7 @@ export function initMapElement(el) {
 
         // Prefill inputs when empty and using Tokyo Station fallback.
         if (latInput && !latInput.value) {
-            syncInputs(latitude, longitude);
+            syncInputs(latitude, longitude, { emit: false });
         }
     }
 

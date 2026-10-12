@@ -7,7 +7,7 @@
         <h1 class="section-title">物件を追加</h1>
     </div>
 
-    <form method="POST" action="{{ route('properties.store') }}" class="max-w-2xl border border-line bg-white p-5 sm:p-6">
+    <form method="POST" action="{{ route('properties.store') }}" enctype="multipart/form-data" class="max-w-2xl border border-line bg-white p-5 sm:p-6">
         @csrf
         @include('properties._form')
 
