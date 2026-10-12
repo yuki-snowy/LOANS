@@ -133,10 +133,6 @@
                                         @endif
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>メモ</th>
-                                    <td class="line-clamp-2 whitespace-pre-wrap break-words">{{ $property->memo ?: '—' }}</td>
-                                </tr>
                             </tbody>
                         </table>
 
