@@ -64,6 +64,8 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('site-header sticky top-0 z-[100]', false);
         $response->assertSee('NO IMAGE');
         $response->assertSee('種目');
+        $response->assertSee('築年');
+        $response->assertSee('メモ');
         $response->assertDontSee('物件を探す');
         $response->assertDontSee('物件を掲載');
     }

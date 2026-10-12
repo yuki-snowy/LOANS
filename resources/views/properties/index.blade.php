@@ -116,6 +116,10 @@
                                     <td>{{ $property->floor_plan ?? '—' }}</td>
                                 </tr>
                                 <tr>
+                                    <th>築年</th>
+                                    <td>{{ $property->builtYearLabel() }}</td>
+                                </tr>
+                                <tr>
                                     <th>駅徒歩</th>
                                     <td>{{ $property->stationMinutesLabel() }}</td>
                                 </tr>
@@ -128,6 +132,10 @@
                                             —
                                         @endif
                                     </td>
+                                </tr>
+                                <tr>
+                                    <th>メモ</th>
+                                    <td class="line-clamp-2 whitespace-pre-wrap break-words">{{ $property->memo ?: '—' }}</td>
                                 </tr>
                             </tbody>
                         </table>
