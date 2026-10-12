@@ -145,8 +145,10 @@
             @endforeach
         </div>
 
-        <div class="mt-6">
-            {{ $properties->links() }}
-        </div>
+        @if ($properties->hasPages())
+            <div class="pagination-bar mt-6">
+                {{ $properties->links() }}
+            </div>
+        @endif
     @endif
 @endsection

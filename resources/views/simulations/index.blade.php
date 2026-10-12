@@ -49,8 +49,10 @@
             </table>
         </div>
 
-        <div class="mt-6">
-            {{ $simulations->links() }}
-        </div>
+        @if ($simulations->hasPages())
+            <div class="pagination-bar mt-6">
+                {{ $simulations->links() }}
+            </div>
+        @endif
     @endif
 @endsection

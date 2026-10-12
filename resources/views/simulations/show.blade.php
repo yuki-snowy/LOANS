@@ -38,7 +38,7 @@
             </p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('simulations.create', ['property_id' => $simulation->property_id]) }}" class="btn-suumo">条件を変えて再試算</a>
+            <a href="{{ route('simulations.create', array_filter(['property_id' => $simulation->property_id, 'from' => $simulation->id])) }}" class="btn-suumo">条件を変えて再試算</a>
             <form method="POST" action="{{ route('simulations.destroy', $simulation) }}" onsubmit="return confirm('このシミュレーションを削除しますか？');">
                 @csrf
                 @method('DELETE')

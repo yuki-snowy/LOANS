@@ -16,12 +16,13 @@ class SimulationService
     /**
      * @return LengthAwarePaginator<int, Simulation>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 5): LengthAwarePaginator
     {
         return Simulation::query()
             ->with('property')
             ->orderByDesc('id')
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**

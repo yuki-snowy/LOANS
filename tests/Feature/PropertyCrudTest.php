@@ -70,6 +70,20 @@ class PropertyCrudTest extends TestCase
     }
 
     #[Test]
+    public function index_paginates_properties(): void
+    {
+        Property::factory()->count(6)->create();
+
+        $page1 = $this->get(route('properties.index'));
+        $page1->assertOk();
+        $page1->assertSee('page=2', false);
+
+        $page2 = $this->get(route('properties.index', ['page' => 2]));
+        $page2->assertOk();
+        $page2->assertSee('page=1', false);
+    }
+
+    #[Test]
     public function index_shows_three_image_slots_when_present(): void
     {
         Storage::fake('public');

@@ -116,6 +116,69 @@ class SimulationFlowTest extends TestCase
     }
 
     #[Test]
+    public function index_paginates_simulations(): void
+    {
+        Simulation::factory()->count(6)->create();
+
+        $page1 = $this->get(route('simulations.index'));
+        $page1->assertOk();
+        $page1->assertSee('page=2', false);
+
+        $page2 = $this->get(route('simulations.index', ['page' => 2]));
+        $page2->assertOk();
+        $page2->assertSee('page=1', false);
+    }
+
+    #[Test]
+    public function store_remembers_form_input_for_reuse(): void
+    {
+        $this->post(route('simulations.store'), $this->validPayload([
+            'annual_income' => 1234,
+            'interest_rate' => 0.777,
+            'employment_type' => 'contract',
+        ]))->assertRedirect();
+
+        $response = $this->get(route('simulations.create'));
+
+        $response->assertOk();
+        $response->assertSee('前回の入力内容をフォームに反映しています');
+        $response->assertSee('value="1234"', false);
+        $response->assertSee('value="0.777"', false);
+        $response->assertSee('value="contract"', false);
+    }
+
+    #[Test]
+    public function create_can_reuse_specific_simulation_input(): void
+    {
+        $simulation = Simulation::factory()->create([
+            'annual_income' => 999,
+            'repayment_years' => 28,
+        ]);
+
+        $response = $this->get(route('simulations.create', ['from' => $simulation->id]));
+
+        $response->assertOk();
+        $response->assertSee('value="999"', false);
+        $response->assertSee('value="28"', false);
+    }
+
+    #[Test]
+    public function create_can_clear_remembered_form_input(): void
+    {
+        $this->post(route('simulations.store'), $this->validPayload([
+            'annual_income' => 1234,
+        ]))->assertRedirect();
+
+        $this->get(route('simulations.create', ['clear_memory' => 1]))
+            ->assertRedirect(route('simulations.create'));
+
+        $response = $this->get(route('simulations.create'));
+        $response->assertOk();
+        $response->assertDontSee('前回の入力内容をフォームに反映しています');
+        $response->assertSee('value="800"', false);
+    }
+
+    #[Test]
     public function destroy_deletes_simulation(): void
     {
         $simulation = Simulation::factory()->create();

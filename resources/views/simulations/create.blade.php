@@ -3,11 +3,25 @@
 @section('title', 'ローン試算')
 
 @section('content')
-    <div class="mb-5">
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <h1 class="section-title">ローン試算・審査判定</h1>
+        @if ($hasFormMemory)
+            <a
+                href="{{ route('simulations.create', array_filter(['property_id' => request('property_id'), 'clear_memory' => 1])) }}"
+                class="text-sm font-bold text-muted underline hover:text-suumo-dark"
+            >
+                保存した入力内容をクリア
+            </a>
+        @endif
     </div>
 
-    <form method="POST" action="{{ route('simulations.store') }}" class="grid gap-5 lg:grid-cols-2">
+    @if ($hasFormMemory && ! old())
+        <div class="mb-5 border border-suumo bg-suumo-light px-4 py-3 text-sm font-medium text-suumo-dark" role="status">
+            前回の入力内容をフォームに反映しています。必要に応じて書き換えて再計算できます。
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('simulations.store') }}" class="grid gap-5 lg:grid-cols-2" data-simulation-form>
         @csrf
 
         <div class="space-y-5">
@@ -22,7 +36,7 @@
                                 <option
                                     value="{{ $property->id }}"
                                     data-price="{{ $property->price }}"
-                                    @selected((string) old('property_id', $selectedProperty?->id) === (string) $property->id)
+                                    @selected((string) old('property_id', $defaults['property_id'] ?? '') === (string) $property->id)
                                 >
                                     {{ $property->name }}（{{ number_format($property->price) }}万円）
                                 </option>
@@ -34,13 +48,13 @@
                         <div>
                             <label for="purchase_price" class="mb-1 block text-sm font-bold">物件価格（万円） <span class="text-price">*</span></label>
                             <input type="number" name="purchase_price" id="purchase_price" min="1" max="999999" required
-                                   value="{{ old('purchase_price', $selectedProperty?->price ?? 3000) }}"
+                                   value="{{ old('purchase_price', $defaults['purchase_price'] ?? 3000) }}"
                                    class="input-suumo">
                         </div>
                         <div>
                             <label for="borrowing_amount" class="mb-1 block text-sm font-bold">借入希望額（万円） <span class="text-price">*</span></label>
                             <input type="number" name="borrowing_amount" id="borrowing_amount" min="1" max="999999" required
-                                   value="{{ old('borrowing_amount', $selectedProperty?->price ?? 3000) }}"
+                                   value="{{ old('borrowing_amount', $defaults['borrowing_amount'] ?? 3000) }}"
                                    class="input-suumo">
                         </div>
                     </div>
@@ -49,13 +63,13 @@
                         <div>
                             <label for="interest_rate" class="mb-1 block text-sm font-bold">適用金利（%） <span class="text-price">*</span></label>
                             <input type="number" name="interest_rate" id="interest_rate" step="0.001" min="0" max="20" required
-                                   value="{{ old('interest_rate', '0.500') }}"
+                                   value="{{ old('interest_rate', $defaults['interest_rate'] ?? '0.500') }}"
                                    class="input-suumo">
                         </div>
                         <div>
                             <label for="repayment_years" class="mb-1 block text-sm font-bold">返済期間（年） <span class="text-price">*</span></label>
                             <input type="number" name="repayment_years" id="repayment_years" min="1" max="50" required
-                                   value="{{ old('repayment_years', 35) }}"
+                                   value="{{ old('repayment_years', $defaults['repayment_years'] ?? 35) }}"
                                    class="input-suumo">
                         </div>
                     </div>
@@ -63,7 +77,7 @@
                     <div>
                         <label for="bonus_payment_amount" class="mb-1 block text-sm font-bold">ボーナス時加算額（万円）</label>
                         <input type="number" name="bonus_payment_amount" id="bonus_payment_amount" min="0" max="99999"
-                               value="{{ old('bonus_payment_amount', 0) }}"
+                               value="{{ old('bonus_payment_amount', $defaults['bonus_payment_amount'] ?? 0) }}"
                                class="input-suumo">
                     </div>
                 </div>
@@ -75,17 +89,17 @@
                     <div>
                         <label for="management_fee" class="mb-1 block text-sm font-bold">管理費（円）</label>
                         <input type="number" name="management_fee" id="management_fee" min="0" max="999999"
-                               value="{{ old('management_fee', 12000) }}" class="input-suumo">
+                               value="{{ old('management_fee', $defaults['management_fee'] ?? 12000) }}" class="input-suumo">
                     </div>
                     <div>
                         <label for="repair_reserve_fee" class="mb-1 block text-sm font-bold">修繕積立金（円）</label>
                         <input type="number" name="repair_reserve_fee" id="repair_reserve_fee" min="0" max="999999"
-                               value="{{ old('repair_reserve_fee', 8000) }}" class="input-suumo">
+                               value="{{ old('repair_reserve_fee', $defaults['repair_reserve_fee'] ?? 8000) }}" class="input-suumo">
                     </div>
                     <div>
                         <label for="parking_fee" class="mb-1 block text-sm font-bold">駐車場代（円）</label>
                         <input type="number" name="parking_fee" id="parking_fee" min="0" max="999999"
-                               value="{{ old('parking_fee', 0) }}" class="input-suumo">
+                               value="{{ old('parking_fee', $defaults['parking_fee'] ?? 0) }}" class="input-suumo">
                     </div>
                 </div>
             </section>
@@ -99,12 +113,12 @@
                         <div>
                             <label for="annual_income" class="mb-1 block text-sm font-bold">年収（万円） <span class="text-price">*</span></label>
                             <input type="number" name="annual_income" id="annual_income" min="1" max="999999" required
-                                   value="{{ old('annual_income', 800) }}" class="input-suumo">
+                                   value="{{ old('annual_income', $defaults['annual_income'] ?? 800) }}" class="input-suumo">
                         </div>
                         <div>
                             <label for="years_of_service" class="mb-1 block text-sm font-bold">勤続年数 <span class="text-price">*</span></label>
                             <input type="number" name="years_of_service" id="years_of_service" min="0" max="60" required
-                                   value="{{ old('years_of_service', 5) }}" class="input-suumo">
+                                   value="{{ old('years_of_service', $defaults['years_of_service'] ?? 5) }}" class="input-suumo">
                         </div>
                     </div>
 
@@ -112,7 +126,7 @@
                         <label for="employment_type" class="mb-1 block text-sm font-bold">雇用形態 <span class="text-price">*</span></label>
                         <select name="employment_type" id="employment_type" required class="input-suumo">
                             @foreach ($employmentTypes as $value => $label)
-                                <option value="{{ $value }}" @selected(old('employment_type', 'full_time') === $value)>{{ $label }}</option>
+                                <option value="{{ $value }}" @selected(old('employment_type', $defaults['employment_type'] ?? 'full_time') === $value)>{{ $label }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -121,12 +135,12 @@
                         <div>
                             <label for="existing_annual_repayment" class="mb-1 block text-sm font-bold">既存年間返済額（万円）</label>
                             <input type="number" name="existing_annual_repayment" id="existing_annual_repayment" min="0" max="999999"
-                                   value="{{ old('existing_annual_repayment', 0) }}" class="input-suumo">
+                                   value="{{ old('existing_annual_repayment', $defaults['existing_annual_repayment'] ?? 0) }}" class="input-suumo">
                         </div>
                         <div>
                             <label for="review_interest_rate" class="mb-1 block text-sm font-bold">審査金利（%）</label>
                             <input type="number" name="review_interest_rate" id="review_interest_rate" step="0.001" min="0" max="20"
-                                   value="{{ old('review_interest_rate', number_format($defaultReviewRate, 3, '.', '')) }}"
+                                   value="{{ old('review_interest_rate', $defaults['review_interest_rate'] ?? number_format($defaultReviewRate, 3, '.', '')) }}"
                                    class="input-suumo">
                         </div>
                     </div>

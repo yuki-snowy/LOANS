@@ -19,12 +19,13 @@ class PropertyService
      *
      * @return LengthAwarePaginator<int, Property>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 5): LengthAwarePaginator
     {
         return Property::query()
             ->with(['images' => fn ($query) => $query->orderBy('sort_order')->orderBy('id')])
             ->orderByDesc('id')
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**
