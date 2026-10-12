@@ -312,11 +312,16 @@
         padding: 0.15rem 0.25rem;
     }
 
+    /* Leaflet の高い z-index を地図ラッパー内に閉じ込める */
+    .loans-map-canvas.leaflet-container {
+        z-index: 0;
+    }
+
     /* SP 下部タブバー（テーマ緑 × 白） */
     .sp-tabbar {
         position: fixed;
         inset: auto 0 0 0;
-        z-index: 50;
+        z-index: 110;
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 0.15rem;
@@ -377,7 +382,7 @@
         position: fixed;
         right: 1rem;
         bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
-        z-index: 45;
+        z-index: 105;
         display: inline-flex;
         height: 2.75rem;
         width: 2.75rem;

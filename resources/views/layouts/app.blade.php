@@ -8,7 +8,7 @@
     @stack('styles')
 </head>
 <body class="min-h-screen bg-canvas font-sans text-ink antialiased">
-    <div class="site-header sticky top-0 z-40">
+    <div class="site-header sticky top-0 z-[100]">
         <div class="h-1 bg-suumo"></div>
         <header class="border-b border-line bg-white/95 shadow-sm backdrop-blur">
             <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">

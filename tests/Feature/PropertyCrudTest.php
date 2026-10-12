@@ -61,7 +61,7 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('物件を追加');
         $response->assertSee('sp-tabbar', false);
         $response->assertSee('data-back-to-top', false);
-        $response->assertSee('site-header sticky', false);
+        $response->assertSee('site-header sticky top-0 z-[100]', false);
         $response->assertSee('NO IMAGE');
         $response->assertSee('種目');
         $response->assertDontSee('物件を探す');

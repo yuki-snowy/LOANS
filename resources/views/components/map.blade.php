@@ -28,7 +28,8 @@
     $mapId = $attributes->get('id') ?: 'loans-map-'.uniqid();
 @endphp
 
-<div {{ $attributes->except('id')->class(['relative overflow-hidden border border-line bg-canvas']) }}>
+{{-- z-0 + isolate で Leaflet 内部の高い z-index をヘッダーより下に閉じ込める --}}
+<div {{ $attributes->except('id')->class(['relative z-0 isolate overflow-hidden border border-line bg-canvas']) }}>
     <div
         id="{{ $mapId }}"
         data-loans-map
@@ -42,14 +43,14 @@
         data-interactive="{{ $interactive ? '1' : '0' }}"
         data-lat-input="{{ $latInput }}"
         data-lng-input="{{ $lngInput }}"
-        class="w-full"
+        class="loans-map-canvas w-full"
         style="height: {{ $height }}; min-height: 240px;"
         role="img"
         aria-label="物件位置地図"
     ></div>
 
     @unless ($hasSinglePoint || $hasMarkers || $interactive)
-        <div class="absolute inset-0 z-[400] flex items-center justify-center bg-canvas/90 px-4 text-center text-sm text-muted">
+        <div class="absolute inset-0 z-10 flex items-center justify-center bg-canvas/90 px-4 text-center text-sm text-muted">
             表示できる座標がありません
         </div>
     @endunless
