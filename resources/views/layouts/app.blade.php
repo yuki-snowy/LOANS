@@ -15,7 +15,8 @@
             <a href="{{ route('properties.index') }}" class="min-w-0">
                 <p class="text-2xl font-black tracking-tight text-suumo">LOAN'S</p>
             </a>
-            <nav class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold sm:gap-2">
+            {{-- PC: ヘッダーナビ / SP: 下部タブバーへ移動 --}}
+            <nav class="hidden flex-wrap items-center justify-end gap-1 text-sm font-bold md:flex md:gap-2" aria-label="メインメニュー">
                 <a href="{{ route('properties.index') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">候補物件</a>
                 <a href="{{ route('simulations.index') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">シミュレーション</a>
                 <a href="{{ route('simulations.create') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">ローン試算</a>
@@ -24,7 +25,7 @@
         </div>
     </header>
 
-    <main class="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+    <main class="mx-auto max-w-5xl px-4 py-6 pb-28 sm:px-6 sm:py-8 md:pb-8">
         @if (session('success'))
             <div class="mb-5 border border-suumo bg-suumo-light px-4 py-3 text-sm font-medium text-suumo-dark" role="status">
                 {{ session('success') }}
@@ -45,12 +46,14 @@
         @yield('content')
     </main>
 
-    <footer class="mt-8 border-t border-line bg-white">
+    <footer class="mt-8 hidden border-t border-line bg-white md:block">
         <div class="mx-auto max-w-5xl px-4 py-6 text-center text-xs text-muted sm:px-6">
             <p class="font-bold text-ink">LOAN'S</p>
             <p class="mt-1">地図: <a href="https://maps.gsi.go.jp/development/ichiran.html" class="underline hover:text-suumo-dark" target="_blank" rel="noopener">国土地理院</a></p>
         </div>
     </footer>
+
+    @include('partials.sp-nav')
 
     @stack('scripts')
 </body>
