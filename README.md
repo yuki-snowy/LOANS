@@ -2,7 +2,48 @@
 
 検討物件の登録・比較とローン試算を行う Web アプリケーションです。
 
-## セットアップ
+**必須 PHP: 8.3 以上（推奨 8.4）**  
+Laravel 13 のため、ホストの PHP 7.x では `php artisan` も `composer` も動きません。
+
+## Windows / Docker で動かす（推奨）
+
+ホスト PHP が古い場合は、**必ずコンテナ内**でコマンドを実行してください。
+
+```powershell
+cd D:\docker\LOANS
+docker compose build
+docker compose up -d
+```
+
+起動後:
+
+- アプリ: http://localhost:8000
+- MySQL: `mysql:3306`（ユーザー `laravel` / パスワード `secret` / DB `laravel`）
+
+マイグレーションや artisan はホストではなくコンテナで:
+
+```powershell
+docker compose exec app php -v
+docker compose exec app php artisan migrate
+docker compose exec app php artisan db:seed
+docker compose exec app php artisan storage:link
+```
+
+`vendor` がホストの古い PHP で作られている場合は、コンテナで入れ直します:
+
+```powershell
+docker compose exec app rm -rf vendor
+docker compose exec app composer install
+docker compose restart app
+```
+
+止めるとき:
+
+```powershell
+docker compose down
+```
+
+## セットアップ（PHP 8.3+ がホストにある場合）
 
 ```bash
 composer install
@@ -20,31 +61,22 @@ php artisan migrate --seed
 php artisan storage:link
 ```
 
-### MySQL / Docker（`DB_HOST=mysql` など）
+### MySQL
 
-`.env` で MySQL を指定したうえで、**必ずマイグレーションを実行**してください。  
+`.env` で MySQL を指定したうえでマイグレーションを実行してください。  
 `property_images` テーブルは最新マイグレーションで追加されます。
 
 ```bash
 php artisan migrate
 php artisan storage:link
-# サンプルデータが必要なら
-php artisan db:seed
+php artisan db:seed   # 任意
 ```
 
-コードを pull したあとに `Table '...property_images' doesn't exist` が出る場合も、同じく:
-
-```bash
-php artisan migrate
-```
-
-## 起動
+## 起動（ホスト PHP 8.3+）
 
 ```bash
 php artisan serve --host=127.0.0.1 --port=8765
 ```
-
-ブラウザで http://127.0.0.1:8765 を開くと候補物件に遷移します。
 
 開発時に Vite を併用する場合:
 
