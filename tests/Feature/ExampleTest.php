@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
 
         $response->assertOk();
         $response->assertSee("LOAN'S");
-        $response->assertSee('「理想の家」も「現実の返済」も');
+        $response->assertSee('夢は大きく、ローンは計画的に。');
         $response->assertSee('まるごと見える化します');
         $response->assertSee('候補物件へ');
         $response->assertSee('ローンを試算');

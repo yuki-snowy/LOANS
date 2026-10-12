@@ -19,7 +19,7 @@
                 </span>
             </a>
 
-            <h1 class="landing__headline">「理想の家」も「現実の返済」も、<br class="sm:hidden">ここで全部見つかる。</h1>
+            <h1 class="landing__headline">夢は大きく、ローンは計画的に。</h1>
             <p class="landing__lead">候補物件の比較から、審査の厳しさ・毎月の返済額までまるごと見える化します。</p>
 
             <div class="landing__actions">
