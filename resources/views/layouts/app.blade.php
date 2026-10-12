@@ -27,7 +27,6 @@
         <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
             <a href="{{ route('properties.index') }}" class="min-w-0">
                 <p class="text-2xl font-black tracking-tight text-suumo">LOAN'S</p>
-                <p class="truncate text-[11px] font-medium text-muted">住宅購入・ローン比較管理</p>
             </a>
             <nav class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold sm:gap-2">
                 <a href="{{ route('properties.index') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">物件を探す</a>
@@ -35,15 +34,6 @@
                 <a href="{{ route('simulations.create') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">ローン試算</a>
                 <a href="{{ route('properties.create') }}" class="btn-suumo ml-1">物件を掲載</a>
             </nav>
-        </div>
-        <div class="bg-suumo-light">
-            <div class="mx-auto flex max-w-5xl flex-wrap gap-x-4 gap-y-1 px-4 py-2 text-xs font-bold text-suumo-dark sm:px-6">
-                <span>賃貸ではなく購入検討向け</span>
-                <span class="text-suumo">｜</span>
-                <span>ローン審査シグナル付き</span>
-                <span class="text-suumo">｜</span>
-                <span>地図は OSM（Cost: ¥0）</span>
-            </div>
         </div>
     </header>
 
@@ -70,8 +60,8 @@
 
     <footer class="mt-8 border-t border-line bg-white">
         <div class="mx-auto max-w-5xl px-4 py-6 text-center text-xs text-muted sm:px-6">
-            <p class="font-bold text-ink">LOAN'S — 住宅購入・ローン比較管理</p>
-            <p class="mt-1">Map data © OpenStreetMap contributors (Cost: ¥0) — 有料地図APIは未使用</p>
+            <p class="font-bold text-ink">LOAN'S</p>
+            <p class="mt-1">© OpenStreetMap contributors</p>
         </div>
     </footer>
 

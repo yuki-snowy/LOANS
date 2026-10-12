@@ -4,17 +4,13 @@
 
 @section('content')
     <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-            <h1 class="section-title text-xl sm:text-2xl">物件を探す</h1>
-            <p class="mt-2 text-sm text-muted">検討中マンションをカセット形式で比較。地図は Leaflet ＋ OpenStreetMap です。</p>
-        </div>
+        <h1 class="section-title text-xl sm:text-2xl">物件を探す</h1>
         <a href="{{ route('properties.create') }}" class="btn-suumo">物件を掲載する</a>
     </div>
 
     @if ($properties->isEmpty())
         <div class="border border-dashed border-line bg-white px-6 py-16 text-center">
             <p class="text-xl font-bold text-ink">該当する物件がありません</p>
-            <p class="mt-2 text-sm text-muted">条件を登録して、購入検討を始めましょう。</p>
             <a href="{{ route('properties.create') }}" class="btn-suumo mt-6">物件を掲載する</a>
         </div>
     @else
@@ -93,7 +89,7 @@
                                         @if ($property->hasCoordinates())
                                             <span class="font-bold text-suumo-dark">ピン登録あり</span>
                                         @else
-                                            <span class="text-muted">未設定（詳細で東京駅フォールバック）</span>
+                                            <span class="text-muted">未設定</span>
                                         @endif
                                     </td>
                                 </tr>

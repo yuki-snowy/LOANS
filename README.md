@@ -25,13 +25,11 @@
 - 再利用可能な Blade コンポーネント `x-map` と `resources/js/loans-map.js`
 - 物件一覧の複数ピンマップ、詳細の単一ピン（物件名・価格ポップアップ）
 - 登録/編集時のインタラクティブ座標ピッカー（東京駅フォールバック）
-- 「Map data © OpenStreetMap contributors (Cost: ¥0)」表記
-
 ## 技術スタック
 
 - PHP 8.3+ / Laravel 13
 - Tailwind CSS 4
-- Leaflet + OpenStreetMap（有料地図 API は未使用）
+- Leaflet + OpenStreetMap
 - SQLite（ローカル既定）
 
 ## セットアップ

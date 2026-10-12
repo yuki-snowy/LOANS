@@ -9,7 +9,6 @@
     'interactive' => false,
     'latInput' => null,
     'lngInput' => null,
-    'showCostBadge' => true,
 ])
 
 @php
@@ -28,7 +27,7 @@
     $mapId = $attributes->get('id') ?: 'loans-map-'.uniqid();
 @endphp
 
-<div {{ $attributes->class(['relative overflow-hidden border border-stone-200 bg-stone-100']) }}>
+<div {{ $attributes->class(['relative overflow-hidden border border-line bg-canvas']) }}>
     <div
         id="{{ $mapId }}"
         data-loans-map
@@ -44,17 +43,11 @@
         class="w-full"
         style="height: {{ $height }}; min-height: 240px;"
         role="img"
-        aria-label="OpenStreetMap による物件位置地図"
+        aria-label="物件位置地図"
     ></div>
 
-    @if ($showCostBadge)
-        <p class="pointer-events-none absolute bottom-2 left-2 z-[500] bg-white/90 px-2 py-1 text-[10px] text-stone-600 shadow-sm">
-            Map data © OpenStreetMap contributors (Cost: ¥0)
-        </p>
-    @endif
-
     @unless ($hasSinglePoint || $hasMarkers || $interactive)
-        <div class="absolute inset-0 z-[400] flex items-center justify-center bg-stone-50/90 px-4 text-center text-sm text-stone-500">
+        <div class="absolute inset-0 z-[400] flex items-center justify-center bg-canvas/90 px-4 text-center text-sm text-muted">
             表示できる座標がありません
         </div>
     @endunless

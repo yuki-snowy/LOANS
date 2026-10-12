@@ -79,8 +79,7 @@
         <section class="border border-line bg-white">
             <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">詳細返済シミュレーション</h2>
             <div class="p-4 sm:p-5">
-                <p class="text-xs text-muted">元利均等返済・円単位四捨五入</p>
-                <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+                <dl class="grid gap-4 sm:grid-cols-2">
                     <div>
                         <dt class="text-xs font-bold text-muted">月々のローン返済額</dt>
                         <dd class="mt-1 text-2xl font-black tabular-nums">{{ number_format($simulation->monthly_payment_yen) }}<span class="ml-1 text-sm font-bold text-muted">円</span></dd>
@@ -132,16 +131,6 @@
                         @endif
                     </tbody>
                 </table>
-
-                <div class="mt-4 border border-line bg-suumo-muted p-3 text-xs leading-relaxed text-muted">
-                    <p class="font-bold text-ink">判定の目安</p>
-                    <ul class="mt-2 list-disc space-y-1 pl-4">
-                        <li>返済負担率 25%以内 → 安全</li>
-                        <li>25%超〜30%以内 → 注意</li>
-                        <li>30%超 → 危険</li>
-                        <li>審査金利ストレステストと雇用・勤続も加味</li>
-                    </ul>
-                </div>
             </div>
         </section>
     </div>

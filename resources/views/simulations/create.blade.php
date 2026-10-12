@@ -5,7 +5,6 @@
 @section('content')
     <div class="mb-5">
         <h1 class="section-title">ローン試算・審査判定</h1>
-        <p class="mt-2 text-sm text-muted">元利均等返済と返済負担率・審査金利ストレステストで通過可能性を見積もります。</p>
     </div>
 
     <form method="POST" action="{{ route('simulations.store') }}" class="grid gap-5 lg:grid-cols-2">
@@ -15,7 +14,6 @@
             <section class="border border-line bg-white">
                 <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">借入条件</h2>
                 <div class="grid gap-4 p-4 sm:p-5">
-                    <p class="text-xs text-muted">物件を選ぶと価格を借入額の初期値に使えます。</p>
                     <div>
                         <label for="property_id" class="mb-1 block text-sm font-bold">対象物件</label>
                         <select name="property_id" id="property_id" class="input-suumo">
@@ -117,14 +115,12 @@
                             <label for="existing_annual_repayment" class="mb-1 block text-sm font-bold">既存年間返済額（万円）</label>
                             <input type="number" name="existing_annual_repayment" id="existing_annual_repayment" min="0" max="999999"
                                    value="{{ old('existing_annual_repayment', 0) }}" class="input-suumo">
-                            <p class="mt-1 text-xs text-muted">マイカー・リボ・その他借入の年間返済合計</p>
                         </div>
                         <div>
                             <label for="review_interest_rate" class="mb-1 block text-sm font-bold">審査金利（%）</label>
                             <input type="number" name="review_interest_rate" id="review_interest_rate" step="0.001" min="0" max="20"
                                    value="{{ old('review_interest_rate', number_format($defaultReviewRate, 3, '.', '')) }}"
                                    class="input-suumo">
-                            <p class="mt-1 text-xs text-muted">一般的な審査金利は 3.0〜3.5%</p>
                         </div>
                     </div>
                 </div>

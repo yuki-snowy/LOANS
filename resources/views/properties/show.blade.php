@@ -95,17 +95,14 @@
                     class="h-80 border-0 lg:h-full lg:min-h-80"
                 />
             @else
-                <div class="p-4">
-                    <p class="mb-3 text-sm text-muted">緯度・経度が未設定のため、東京駅周辺をフォールバック表示しています。</p>
-                    <x-map
-                        :latitude="35.681236"
-                        :longitude="139.767125"
-                        title="東京駅（デフォルト中心）"
-                        :zoom="13"
-                        height="300px"
-                        class="border-line"
-                    />
-                </div>
+                <x-map
+                    :latitude="35.681236"
+                    :longitude="139.767125"
+                    title="東京駅"
+                    :zoom="13"
+                    height="320px"
+                    class="border-0"
+                />
             @endif
         </section>
     </div>

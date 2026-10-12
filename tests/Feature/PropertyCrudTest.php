@@ -83,7 +83,6 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('詳細表示テスト');
         $response->assertSee('9,000');
         $response->assertSee('data-loans-map', false);
-        $response->assertSee('OpenStreetMap contributors (Cost: ¥0)', false);
         $response->assertSee('35.665682', false);
     }
 

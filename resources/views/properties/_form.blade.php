@@ -42,9 +42,6 @@
     @endphp
     <div>
         <p class="mb-2 text-sm font-bold text-ink">地図で座標を指定</p>
-        <p class="mb-3 text-xs text-muted">
-            未入力時は東京駅周辺を初期表示。クリック／ドラッグで緯度・経度を設定（有料ジオコーディングAPIは未使用）。
-        </p>
         <x-map
             :latitude="$mapLat"
             :longitude="$mapLng"

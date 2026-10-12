@@ -5,7 +5,6 @@
 @section('content')
     <div class="mb-5">
         <h1 class="section-title">物件を掲載</h1>
-        <p class="mt-2 text-sm text-muted">検討物件の基本情報を入力します。</p>
     </div>
 
     <form method="POST" action="{{ route('properties.store') }}" class="max-w-2xl border border-line bg-white p-5 sm:p-6">

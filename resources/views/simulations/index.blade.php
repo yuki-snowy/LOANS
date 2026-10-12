@@ -4,17 +4,13 @@
 
 @section('content')
     <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-            <h1 class="section-title">シミュレーション履歴</h1>
-            <p class="mt-2 text-sm text-muted">返済試算と審査判定の結果を一覧します。</p>
-        </div>
+        <h1 class="section-title">シミュレーション履歴</h1>
         <a href="{{ route('simulations.create') }}" class="btn-suumo">新規試算</a>
     </div>
 
     @if ($simulations->isEmpty())
         <div class="border border-dashed border-line bg-white px-6 py-16 text-center">
-            <p class="text-xl font-bold text-ink">まだシミュレーションがありません</p>
-            <p class="mt-2 text-sm text-muted">借入条件と年収を入力して、返済負担と審査シグナルを確認しましょう。</p>
+            <p class="text-xl font-bold text-ink">シミュレーションがありません</p>
             <a href="{{ route('simulations.create') }}" class="btn-suumo mt-6">ローンを試算する</a>
         </div>
     @else
