@@ -10,7 +10,39 @@ function onReady(callback) {
     }
 }
 
+function initBackToTop() {
+    const button = document.querySelector('[data-back-to-top]');
+    if (! button) {
+        return;
+    }
+
+    const threshold = 280;
+    let ticking = false;
+
+    const sync = () => {
+        const show = window.scrollY > threshold;
+        button.hidden = ! show;
+        button.classList.toggle('is-visible', show);
+        ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+        if (! ticking) {
+            window.requestAnimationFrame(sync);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    button.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    sync();
+}
+
 onReady(() => {
+    initBackToTop();
+
     const tasks = [];
     const needsMap = document.querySelector('[data-loans-map], [data-load-map], [data-location-search]');
 
