@@ -26,5 +26,7 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
-# Local smoke screenshots
+# Local smoke / demo screenshots (not for the public repo)
 screenshot_*.webp
+screenshot_*.png
+/opt/cursor/
