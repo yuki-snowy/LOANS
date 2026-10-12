@@ -11,23 +11,32 @@
 
     <div class="grid gap-5 sm:grid-cols-2">
         <div>
+            <label for="property_type" class="mb-1 block text-sm font-bold text-ink">物件種目 <span class="text-price">*</span></label>
+            <select name="property_type" id="property_type" required class="input-suumo">
+                <option value="">選択してください</option>
+                @foreach ($propertyTypes as $value => $label)
+                    <option value="{{ $value }}" @selected(old('property_type', $property?->property_type) === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
             <label for="price" class="mb-1 block text-sm font-bold text-ink">価格（万円） <span class="text-price">*</span></label>
             <input type="number" name="price" id="price" value="{{ old('price', $property?->price) }}" required min="1" max="999999" class="input-suumo" placeholder="6500">
         </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="station_minutes" class="mb-1 block text-sm font-bold text-ink">駅徒歩 <span class="text-price">*</span></label>
             <select name="station_minutes" id="station_minutes" required class="input-suumo">
                 <option value="">選択してください</option>
                 @foreach ($stationMinutes as $minutes)
                     <option value="{{ $minutes }}" @selected((string) old('station_minutes', $property?->station_minutes) === (string) $minutes)>
-                        {{ $minutes }}分
+                        {{ \App\Support\PropertyOptions::stationMinutesLabel($minutes) }}
                     </option>
                 @endforeach
             </select>
         </div>
-    </div>
-
-    <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="floor_plan" class="mb-1 block text-sm font-bold text-ink">間取り <span class="text-price">*</span></label>
             <select name="floor_plan" id="floor_plan" required class="input-suumo">
@@ -37,20 +46,20 @@
                 @endforeach
             </select>
         </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="built_year" class="mb-1 block text-sm font-bold text-ink">築年 <span class="text-price">*</span></label>
             <select name="built_year" id="built_year" required class="input-suumo">
                 <option value="">選択してください</option>
                 @foreach ($builtYears as $year)
                     <option value="{{ $year }}" @selected((string) old('built_year', $property?->built_year) === (string) $year)>
-                        {{ $year }}年
+                        {{ \App\Support\PropertyOptions::builtYearLabel($year) }}
                     </option>
                 @endforeach
             </select>
         </div>
-    </div>
-
-    <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="exclusive_area" class="mb-1 block text-sm font-bold text-ink">専有面積（㎡） <span class="text-price">*</span></label>
             <input
@@ -66,6 +75,9 @@
                 placeholder="65.40"
             >
         </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="structure" class="mb-1 block text-sm font-bold text-ink">構造 <span class="text-price">*</span></label>
             <select name="structure" id="structure" required class="input-suumo">
@@ -75,18 +87,17 @@
                 @endforeach
             </select>
         </div>
-    </div>
-
-    <div>
-        <label for="building_floors" class="mb-1 block text-sm font-bold text-ink">階建て <span class="text-price">*</span></label>
-        <select name="building_floors" id="building_floors" required class="input-suumo">
-            <option value="">選択してください</option>
-            @foreach ($buildingFloors as $floors)
-                <option value="{{ $floors }}" @selected((string) old('building_floors', $property?->building_floors) === (string) $floors)>
-                    {{ $floors }}階建
-                </option>
-            @endforeach
-        </select>
+        <div>
+            <label for="building_floors" class="mb-1 block text-sm font-bold text-ink">階建て <span class="text-price">*</span></label>
+            <select name="building_floors" id="building_floors" required class="input-suumo">
+                <option value="">選択してください</option>
+                @foreach ($buildingFloors as $value => $label)
+                    <option value="{{ $value }}" @selected((string) old('building_floors', $property?->building_floors) === (string) $value)>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
     </div>
 
     <div data-location-search class="border border-line bg-suumo-muted/40 p-3 sm:p-4">
@@ -182,8 +193,8 @@
     </div>
 
     <div data-image-upload>
-        <label for="images" class="mb-1 block text-sm font-bold text-ink">画像（複数可）</label>
-        <p class="mb-2 text-xs text-muted">最大10枚。選択時にブラウザ側で圧縮してから送信します。</p>
+        <p class="mb-1 text-sm font-bold text-ink">画像（複数可）</p>
+        <p class="mb-2 text-xs text-muted">1辺1280px・約800KBを目安に自動圧縮します。最大10枚。</p>
         <input
             type="file"
             name="images[]"
@@ -191,21 +202,21 @@
             data-image-input
             accept="image/jpeg,image/png,image/webp"
             multiple
-            class="block w-full text-sm text-muted file:mr-3 file:border file:border-line file:bg-suumo-muted file:px-3 file:py-2 file:text-sm file:font-bold file:text-ink hover:file:bg-suumo-light"
+            class="sr-only"
         >
-        <p class="mt-1 text-xs text-muted" data-image-status></p>
-        <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3" data-image-preview></div>
+        <div class="grid grid-cols-3 gap-3 sm:grid-cols-4" data-image-preview></div>
+        <p class="mt-2 text-xs text-muted" data-image-status></p>
 
         @if ($property?->images?->isNotEmpty())
             <div class="mt-4">
                 <p class="mb-2 text-sm font-bold text-ink">登録済み画像</p>
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div class="grid grid-cols-3 gap-3 sm:grid-cols-4">
                     @foreach ($property->images as $image)
-                        <label class="relative block overflow-hidden border border-line bg-suumo-muted">
-                            <img src="{{ $image->url() }}" alt="登録画像 {{ $loop->iteration }}" class="aspect-[4/3] h-28 w-full object-cover">
-                            <span class="mt-1 flex items-center gap-2 px-2 py-1.5 text-xs font-bold text-ink">
-                                <input type="checkbox" name="delete_images[]" value="{{ $image->id }}" class="accent-[var(--color-suumo)]">
-                                削除する
+                        <label class="image-tile relative">
+                            <img src="{{ $image->url() }}" alt="登録画像 {{ $loop->iteration }}" class="h-full w-full object-cover">
+                            <span class="absolute inset-x-0 bottom-0 bg-black/55 px-1 py-1 text-center text-[10px] font-bold text-white">
+                                <input type="checkbox" name="delete_images[]" value="{{ $image->id }}" class="align-middle accent-white">
+                                削除
                             </span>
                         </label>
                     @endforeach

@@ -83,10 +83,11 @@ class PropertyController extends Controller
         return [
             'evaluations' => Property::EVALUATIONS,
             'prefectures' => Prefectures::ALL,
+            'propertyTypes' => PropertyOptions::PROPERTY_TYPES,
             'floorPlans' => PropertyOptions::FLOOR_PLANS,
             'structures' => PropertyOptions::STRUCTURES,
             'builtYears' => PropertyOptions::builtYears(),
-            'buildingFloors' => PropertyOptions::buildingFloors(),
+            'buildingFloors' => PropertyOptions::BUILDING_FLOORS,
             'stationMinutes' => PropertyOptions::stationMinutes(),
         ];
     }

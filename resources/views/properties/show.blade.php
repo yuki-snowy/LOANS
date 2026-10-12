@@ -65,6 +65,10 @@
                 <table class="spec-table">
                     <tbody>
                         <tr>
+                            <th>物件種目</th>
+                            <td>{{ $property->propertyTypeLabel() }}</td>
+                        </tr>
+                        <tr>
                             <th>価格</th>
                             <td><span class="price-em text-xl">{{ number_format($property->price) }}</span> 万円</td>
                         </tr>
@@ -74,7 +78,7 @@
                         </tr>
                         <tr>
                             <th>築年</th>
-                            <td>{{ $property->built_year ? $property->built_year.'年' : '—' }}</td>
+                            <td>{{ $property->builtYearLabel() }}</td>
                         </tr>
                         <tr>
                             <th>専有面積</th>
@@ -92,7 +96,7 @@
                         </tr>
                         <tr>
                             <th>駅徒歩</th>
-                            <td>{{ $property->station_minutes }}分</td>
+                            <td>{{ $property->stationMinutesLabel() }}</td>
                         </tr>
                         <tr>
                             <th>評価</th>

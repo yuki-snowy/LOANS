@@ -65,6 +65,10 @@ class PropertyRequest extends FormRequest
             $this->merge(['structure' => null]);
         }
 
+        if ($this->has('property_type') && $this->input('property_type') === '') {
+            $this->merge(['property_type' => null]);
+        }
+
         if ($this->filled('postal_code')) {
             $digits = preg_replace('/\D/', '', (string) $this->input('postal_code')) ?? '';
             if (strlen($digits) === 7) {

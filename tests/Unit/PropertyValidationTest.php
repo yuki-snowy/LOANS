@@ -27,6 +27,7 @@ class PropertyValidationTest extends TestCase
     {
         return array_merge([
             'name' => 'パークタワー青山 1203号室',
+            'property_type' => 'used_mansion',
             'price' => 8500,
             'postal_code' => '107-0062',
             'prefecture' => '東京都',
@@ -38,7 +39,7 @@ class PropertyValidationTest extends TestCase
             'built_year' => 2015,
             'exclusive_area' => 78.45,
             'structure' => 'RC造',
-            'building_floors' => 24,
+            'building_floors' => 3,
             'evaluation' => 'A',
             'memo' => '南向き・眺望良好',
         ], $overrides);
@@ -101,10 +102,11 @@ class PropertyValidationTest extends TestCase
             'structure invalid' => [['structure' => '石造'], 'structure'],
             'built year too old' => [['built_year' => 1800], 'built_year'],
             'exclusive area zero' => [['exclusive_area' => 0], 'exclusive_area'],
-            'building floors zero' => [['building_floors' => 0], 'building_floors'],
+            'building floors invalid' => [['building_floors' => 12], 'building_floors'],
+            'property type invalid' => [['property_type' => 'villa'], 'property_type'],
             'latitude out of range' => [['latitude' => 91], 'latitude'],
             'longitude out of range' => [['longitude' => -181], 'longitude'],
-            'station minutes negative' => [['station_minutes' => -1], 'station_minutes'],
+            'station minutes invalid' => [['station_minutes' => 7], 'station_minutes'],
             'invalid evaluation' => [['evaluation' => 'Z'], 'evaluation'],
         ];
     }

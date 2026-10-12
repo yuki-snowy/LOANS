@@ -29,6 +29,7 @@ class PropertyFactory extends Factory
                 'プラウド世田谷',
                 'ブリリア中目黒',
             ]).' '.fake()->buildingNumber().'号室',
+            'property_type' => fake()->randomElement(array_keys(PropertyOptions::PROPERTY_TYPES)),
             'price' => fake()->numberBetween(3000, 15000),
             'postal_code' => fake()->optional(0.7)->numerify('###-####'),
             'prefecture' => $prefecture,
@@ -40,7 +41,7 @@ class PropertyFactory extends Factory
             'built_year' => fake()->numberBetween(1985, (int) date('Y')),
             'exclusive_area' => fake()->randomFloat(2, 25, 120),
             'structure' => fake()->randomElement(PropertyOptions::STRUCTURES),
-            'building_floors' => fake()->numberBetween(3, 30),
+            'building_floors' => fake()->randomElement(array_keys(PropertyOptions::BUILDING_FLOORS)),
             'evaluation' => fake()->optional(0.7)->randomElement(Property::EVALUATIONS),
             'memo' => fake()->optional(0.5)->realText(80),
         ];

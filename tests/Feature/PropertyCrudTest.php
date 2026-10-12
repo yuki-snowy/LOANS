@@ -21,18 +21,19 @@ class PropertyCrudTest extends TestCase
     {
         return array_merge([
             'name' => 'シティハウス目黒 501号室',
+            'property_type' => 'used_mansion',
             'price' => 6200,
             'postal_code' => '153-0064',
             'prefecture' => '東京都',
             'address' => '目黒区下目黒1-1-1',
             'latitude' => 35.6335600,
             'longitude' => 139.7157800,
-            'station_minutes' => 7,
+            'station_minutes' => 10,
             'floor_plan' => '2LDK',
             'built_year' => 2008,
             'exclusive_area' => 58.20,
             'structure' => 'SRC造',
-            'building_floors' => 12,
+            'building_floors' => 3,
             'evaluation' => 'B',
             'memo' => '駅近・リフォーム済',
         ], $overrides);
@@ -59,9 +60,9 @@ class PropertyCrudTest extends TestCase
         $response->assertSee("LOAN'S");
         $response->assertSee('物件を追加');
         $response->assertSee('NO IMAGE');
+        $response->assertSee('種目');
         $response->assertDontSee('物件を探す');
         $response->assertDontSee('物件を掲載');
-        $response->assertDontSee('中古マンション');
     }
 
     #[Test]
@@ -97,10 +98,11 @@ class PropertyCrudTest extends TestCase
             'postal_code' => '153-0064',
             'prefecture' => '東京都',
             'address' => '目黒区下目黒1-1-1',
+            'property_type' => 'used_mansion',
             'floor_plan' => '2LDK',
             'built_year' => 2008,
             'structure' => 'SRC造',
-            'building_floors' => 12,
+            'building_floors' => 3,
             'evaluation' => 'B',
         ]);
     }
@@ -149,11 +151,12 @@ class PropertyCrudTest extends TestCase
         $property = Property::factory()->create([
             'name' => '詳細表示テスト',
             'price' => 9000,
+            'property_type' => 'used_mansion',
             'floor_plan' => '3LDK',
             'built_year' => 2012,
             'exclusive_area' => 70.5,
             'structure' => 'RC造',
-            'building_floors' => 15,
+            'building_floors' => 3,
             'latitude' => 35.6656820,
             'longitude' => 139.7120880,
         ]);
@@ -163,9 +166,10 @@ class PropertyCrudTest extends TestCase
         $response->assertOk();
         $response->assertSee('詳細表示テスト');
         $response->assertSee('9,000');
+        $response->assertSee('中古マンション');
         $response->assertSee('3LDK');
         $response->assertSee('2012年');
-        $response->assertSee('RC造 / 15階建');
+        $response->assertSee('RC造 / 3階以上');
         $response->assertSee('data-loans-map', false);
         $response->assertSee('35.665682', false);
     }
@@ -198,12 +202,15 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('物件を追加');
         $response->assertSee('郵便番号');
         $response->assertSee('都道府県');
+        $response->assertSee('物件種目');
         $response->assertSee('間取り');
         $response->assertSee('築年');
         $response->assertSee('専有面積');
         $response->assertSee('構造');
-        $response->assertSee('階建て');
+        $response->assertSee('3階以上');
+        $response->assertSee('30分以上');
         $response->assertSee('画像（複数可）');
+        $response->assertSee('data-image-preview', false);
         $response->assertSee('data-postal-autofill', false);
         $response->assertSee('data-image-upload', false);
         $response->assertSee('sm:grid-cols-2', false);
@@ -214,16 +221,20 @@ class PropertyCrudTest extends TestCase
     }
 
     #[Test]
-    public function edit_form_omits_fixed_category_label(): void
+    public function edit_form_includes_property_type_select(): void
     {
-        $property = Property::factory()->create();
+        $property = Property::factory()->create([
+            'property_type' => 'used_mansion',
+        ]);
 
         $response = $this->get(route('properties.edit', $property));
 
         $response->assertOk();
         $response->assertSee('物件情報を編集');
-        $response->assertDontSee('中古一戸建て');
-        $response->assertDontSee('中古マンション');
+        $response->assertSee('物件種目');
+        $response->assertSee('name="property_type"', false);
+        $response->assertSee('中古マンション');
+        $response->assertDontSee('<p class="mt-2 text-sm text-muted">中古一戸建て</p>', false);
     }
 
     #[Test]

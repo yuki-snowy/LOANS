@@ -87,12 +87,16 @@
                                     <td>{{ $property->fullAddress() }}</td>
                                 </tr>
                                 <tr>
+                                    <th>種目</th>
+                                    <td>{{ $property->propertyTypeLabel() }}</td>
+                                </tr>
+                                <tr>
                                     <th>間取り</th>
                                     <td>{{ $property->floor_plan ?? '—' }}</td>
                                 </tr>
                                 <tr>
                                     <th>駅徒歩</th>
-                                    <td>{{ $property->station_minutes }}分</td>
+                                    <td>{{ $property->stationMinutesLabel() }}</td>
                                 </tr>
                                 <tr>
                                     <th>専有面積</th>

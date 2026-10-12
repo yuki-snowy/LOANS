@@ -108,6 +108,7 @@ class GeocodeTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('郵便番号・住所から地図検索');
+        $response->assertSee('物件種目');
         $response->assertSee('data-location-search', false);
         $response->assertSee('国土地理院');
         $response->assertDontSee('unpkg.com/leaflet', false);

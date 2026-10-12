@@ -14,6 +14,7 @@ use Illuminate\Validation\Rule;
 
 #[Fillable([
     'name',
+    'property_type',
     'price',
     'postal_code',
     'prefecture',
@@ -45,6 +46,7 @@ class Property extends Model
 
         return [
             'name' => ['required', 'string', 'max:255'],
+            'property_type' => ['required', 'string', Rule::in(array_keys(PropertyOptions::PROPERTY_TYPES))],
             'price' => ['required', 'integer', 'min:1', 'max:999999'],
             'postal_code' => ['nullable', 'string', 'regex:/^\d{3}-?\d{4}$/'],
             'prefecture' => ['required', 'string', Rule::in(Prefectures::ALL)],
@@ -56,7 +58,7 @@ class Property extends Model
             'built_year' => ['required', 'integer', 'min:1950', 'max:'.$currentYear],
             'exclusive_area' => ['required', 'numeric', 'min:1', 'max:9999.99'],
             'structure' => ['required', 'string', Rule::in(PropertyOptions::STRUCTURES)],
-            'building_floors' => ['required', 'integer', 'min:1', 'max:60'],
+            'building_floors' => ['required', 'integer', Rule::in(array_keys(PropertyOptions::BUILDING_FLOORS))],
             'evaluation' => ['nullable', 'string', Rule::in(self::EVALUATIONS)],
             'memo' => ['nullable', 'string', 'max:5000'],
         ];
@@ -82,13 +84,14 @@ class Property extends Model
     {
         return [
             'name' => '物件名',
+            'property_type' => '物件種目',
             'price' => '価格（万円）',
             'postal_code' => '郵便番号',
             'prefecture' => '都道府県',
             'address' => '住所',
             'latitude' => '緯度',
             'longitude' => '経度',
-            'station_minutes' => '駅徒歩（分）',
+            'station_minutes' => '駅徒歩',
             'floor_plan' => '間取り',
             'built_year' => '築年',
             'exclusive_area' => '専有面積（㎡）',
@@ -146,19 +149,41 @@ class Property extends Model
         return $postal ? '〒'.$postal.' '.$line : $line;
     }
 
+    public function propertyTypeLabel(): string
+    {
+        return PropertyOptions::PROPERTY_TYPES[$this->property_type] ?? '—';
+    }
+
+    public function stationMinutesLabel(): string
+    {
+        return PropertyOptions::stationMinutesLabel((int) $this->station_minutes);
+    }
+
+    public function buildingFloorsLabel(): string
+    {
+        return PropertyOptions::buildingFloorsLabel((int) ($this->building_floors ?? 1));
+    }
+
+    public function builtYearLabel(): string
+    {
+        if (! $this->built_year) {
+            return '—';
+        }
+
+        return PropertyOptions::builtYearLabel((int) $this->built_year);
+    }
+
     public function structureLabel(): string
     {
         $parts = array_filter([
             $this->structure,
-            $this->building_floors ? $this->building_floors.'階建' : null,
+            $this->building_floors ? $this->buildingFloorsLabel() : null,
         ]);
 
         return $parts !== [] ? implode(' / ', $parts) : '—';
     }
 
     /**
-     * 一覧用の1枚目画像。
-     *
      * @return HasOne<PropertyImage, $this>
      */
     public function coverImage(): HasOne
