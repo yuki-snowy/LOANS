@@ -53,19 +53,40 @@
 
         <div class="space-y-3">
             @foreach ($properties as $property)
+                @php
+                    $availableImages = $property->images
+                        ->filter(fn ($image) => $image->isAvailable())
+                        ->values();
+                    $gallerySlots = [
+                        $availableImages->get(0),
+                        $availableImages->get(1),
+                        $availableImages->get(2),
+                    ];
+                @endphp
                 <article class="cassette transition hover:border-suumo">
-                    <a href="{{ route('properties.show', $property) }}" class="cassette-thumb">
+                    <a href="{{ route('properties.show', $property) }}" class="cassette-gallery" aria-label="{{ $property->name }} の画像">
                         @if ($property->evaluation)
-                            <span class="absolute left-3 top-3 z-10 bg-suumo px-1.5 py-0.5 text-[10px] font-black text-white">評価{{ $property->evaluation }}</span>
+                            <span class="cassette-gallery__badge">評価{{ $property->evaluation }}</span>
                         @endif
-                        @if ($property->coverImage?->isAvailable())
-                            <img src="{{ $property->coverImage->url() }}" alt="{{ $property->name }}" class="absolute inset-0 h-full w-full object-cover object-center" loading="lazy" decoding="async">
-                        @else
-                            <span class="relative">NO IMAGE</span>
-                        @endif
+                        @foreach ($gallerySlots as $index => $image)
+                            @if ($image)
+                                <span class="cassette-gallery__item {{ $index === 0 ? 'cassette-gallery__item--main' : 'cassette-gallery__item--side' }}">
+                                    <img
+                                        src="{{ $image->url() }}"
+                                        alt="{{ $property->name }} 画像{{ $index + 1 }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                </span>
+                            @else
+                                <span class="cassette-gallery__item cassette-gallery__item--empty {{ $index === 0 ? 'cassette-gallery__item--main' : 'cassette-gallery__item--side' }}">
+                                    NO IMAGE
+                                </span>
+                            @endif
+                        @endforeach
                     </a>
 
-                    <div class="min-w-0">
+                    <div class="cassette-body min-w-0">
                         <div class="flex flex-wrap items-start justify-between gap-2">
                             <h2 class="min-w-0 truncate text-base font-bold leading-snug sm:text-lg">
                                 <a href="{{ route('properties.show', $property) }}" class="text-ink hover:text-suumo-dark hover:underline">

@@ -69,24 +69,33 @@ class PropertyCrudTest extends TestCase
     }
 
     #[Test]
-    public function index_shows_cover_image_when_present(): void
+    public function index_shows_three_image_slots_when_present(): void
     {
         Storage::fake('public');
 
         $property = Property::factory()->create(['name' => '画像付き物件']);
-        $path = $this->sampleImage()->store('properties/'.$property->id, 'public');
-        PropertyImage::query()->create([
-            'property_id' => $property->id,
-            'path' => $path,
-            'sort_order' => 0,
-        ]);
+        $paths = [];
+        foreach ([0, 1, 2] as $order) {
+            $path = $this->sampleImage('img-'.$order.'.jpg')->store('properties/'.$property->id, 'public');
+            $paths[] = $path;
+            PropertyImage::query()->create([
+                'property_id' => $property->id,
+                'path' => $path,
+                'sort_order' => $order,
+            ]);
+        }
 
         $response = $this->get(route('properties.index'));
 
         $response->assertOk();
         $response->assertSee('画像付き物件');
-        $response->assertSee('src="/storage/'.$path.'"', false);
-        $response->assertDontSee('>NO IMAGE<', false);
+        $response->assertSee('cassette-gallery', false);
+        $response->assertSee('cassette-gallery__item--main', false);
+        $response->assertSee('cassette-gallery__item--side', false);
+        foreach ($paths as $path) {
+            $response->assertSee('src="/storage/'.$path.'"', false);
+        }
+        $response->assertDontSee('cassette-gallery__item--empty', false);
     }
 
     #[Test]

@@ -97,7 +97,9 @@
 
     .cassette {
         display: grid;
+        grid-template-columns: 1fr;
         gap: 1rem;
+        align-items: stretch;
         border: 1px solid var(--color-line);
         background: var(--color-panel);
         padding: 1rem;
@@ -105,25 +107,88 @@
 
     @media (min-width: 640px) {
         .cassette {
-            grid-template-columns: 11rem 1fr;
+            /* 左: 大1+小2の正方形群 / 右: テキスト。高さはテキスト側に合わせる */
+            grid-template-columns: auto 1fr;
             gap: 1.25rem;
             padding: 1.1rem 1.25rem;
         }
     }
 
-    .cassette-thumb {
-        position: relative;
+    .cassette-body {
         display: flex;
-        aspect-ratio: 1 / 1;
+        min-width: 0;
+        flex-direction: column;
+    }
+
+    /* 一覧: 常時3枠（大1 + 小2）。高さは右カラムに合わせ、正方形が枠に収まる */
+    .cassette-gallery {
+        position: relative;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 0.35rem;
         width: 100%;
-        max-width: 11rem;
+        aspect-ratio: 3 / 2;
+        overflow: hidden;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    @media (min-width: 640px) {
+        .cassette-gallery {
+            width: auto;
+            height: 100%;
+            min-height: 12rem;
+            aspect-ratio: 3 / 2;
+            justify-self: start;
+        }
+    }
+
+    .cassette-gallery__badge {
+        position: absolute;
+        top: 0.4rem;
+        left: 0.4rem;
+        z-index: 2;
+        background: var(--color-suumo);
+        padding: 0.15rem 0.4rem;
+        font-size: 0.625rem;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .cassette-gallery__item {
+        display: block;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        border: 1px solid var(--color-line);
+        background: #f0f0f0;
+    }
+
+    .cassette-gallery__item--main {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+    }
+
+    .cassette-gallery__item--side {
+        grid-column: 2;
+    }
+
+    .cassette-gallery__item img {
+        display: block;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .cassette-gallery__item--empty {
+        display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
         background: linear-gradient(160deg, #dff3c4 0%, #f7f7f7 55%, #e8e8e8 100%);
-        border: 1px solid var(--color-line);
         color: var(--color-suumo-dark);
-        font-size: 0.75rem;
+        font-size: 0.625rem;
         font-weight: 700;
         letter-spacing: 0.04em;
     }
