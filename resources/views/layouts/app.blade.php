@@ -15,9 +15,11 @@
                 <p class="font-serif text-2xl tracking-tight text-teal-800 transition group-hover:text-teal-700">LOAN'S</p>
                 <p class="text-xs text-stone-500">住宅購入・ローン比較管理</p>
             </a>
-            <nav class="flex items-center gap-3 text-sm">
+            <nav class="flex flex-wrap items-center justify-end gap-3 text-sm">
                 <a href="{{ route('properties.index') }}" class="text-stone-600 transition hover:text-teal-800">物件一覧</a>
-                <a href="{{ route('properties.create') }}" class="bg-teal-800 px-3 py-1.5 text-white transition hover:bg-teal-700">新規登録</a>
+                <a href="{{ route('simulations.index') }}" class="text-stone-600 transition hover:text-teal-800">シミュレーション</a>
+                <a href="{{ route('simulations.create') }}" class="text-stone-600 transition hover:text-teal-800">ローン試算</a>
+                <a href="{{ route('properties.create') }}" class="bg-teal-800 px-3 py-1.5 text-white transition hover:bg-teal-700">物件登録</a>
             </nav>
         </div>
     </header>
@@ -44,7 +46,7 @@
     </main>
 
     <footer class="border-t border-stone-200 py-6 text-center text-xs text-stone-500">
-        Phase 1 — 物件 CRUD &amp; データベース構築
+        Phase 2 — ローンシミュレーター &amp; 審査判定
     </footer>
 
     @stack('scripts')

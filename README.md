@@ -11,6 +11,14 @@
 - 詳細画面の地図表示（Leaflet + OpenStreetMap）
 - PHPUnit によるバリデーション・CRUD テスト
 
+## Phase 2（実装済み）
+
+- `simulations` テーブル（物件紐付け・審査入力・計算結果スナップショット）
+- `LoanCalculatorService`（元利均等返済・月額固定費合算・審査判定・審査金利ストレステスト）
+- `SimulationService` / `SimulationController` + Blade UI
+- 審査シグナル（安全 / 注意 / 危険）の色分け表示
+- PHPUnit（計算エッジケース + シミュレーションフロー）
+
 ## 技術スタック
 
 - PHP 8.3+ / Laravel 13
@@ -58,3 +66,6 @@ php artisan test
 | `/properties/create` | 物件登録 |
 | `/properties/{id}` | 物件詳細（地図表示） |
 | `/properties/{id}/edit` | 物件編集 |
+| `/simulations` | シミュレーション履歴 |
+| `/simulations/create` | ローン試算・審査判定 |
+| `/simulations/{id}` | 試算結果（返済額・審査シグナル） |

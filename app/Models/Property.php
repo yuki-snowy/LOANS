@@ -6,6 +6,7 @@ use Database\Factories\PropertyFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\Rule;
 
 #[Fillable([
@@ -80,5 +81,13 @@ class Property extends Model
     public function hasCoordinates(): bool
     {
         return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    /**
+     * @return HasMany<Simulation, $this>
+     */
+    public function simulations(): HasMany
+    {
+        return $this->hasMany(Simulation::class);
     }
 }

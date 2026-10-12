@@ -14,7 +14,8 @@
             <p class="mt-2 text-sm text-stone-600">{{ $property->address }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('properties.edit', $property) }}" class="bg-teal-800 px-4 py-2 text-sm text-white transition hover:bg-teal-700">編集</a>
+            <a href="{{ route('simulations.create', ['property_id' => $property->id]) }}" class="bg-teal-800 px-4 py-2 text-sm text-white transition hover:bg-teal-700">ローン試算</a>
+            <a href="{{ route('properties.edit', $property) }}" class="border border-teal-800 px-4 py-2 text-sm text-teal-800 transition hover:bg-teal-50">編集</a>
             <form method="POST" action="{{ route('properties.destroy', $property) }}" onsubmit="return confirm('この物件を削除しますか？');">
                 @csrf
                 @method('DELETE')
