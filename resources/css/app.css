@@ -121,7 +121,7 @@
         flex-direction: column;
     }
 
-    /* 一覧: 常時3枠。SPは大1+右小2 / PCは大1の下に小2横並び（いずれも正方形） */
+    /* 一覧: 常時3枠。SPは大1+右小2 / PCは大1の下に小2横並び（各枠 1:1） */
     .cassette-gallery {
         --cassette-gallery-max-w: 15rem;
         --cassette-gallery-gap: 0.35rem;
@@ -130,9 +130,10 @@
         grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
         grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
         gap: var(--cassette-gallery-gap);
+        align-items: stretch;
         width: 100%;
         max-width: var(--cassette-gallery-max-w);
-        /* 大(2s+g) × 高(2s+g) 相当 → 正方形セルが収まる 3:2 */
+        /* SP: 大+右小2 が正方形になる 3:2 枠 */
         aspect-ratio: 3 / 2;
         overflow: hidden;
         color: inherit;
@@ -152,13 +153,13 @@
     }
 
     .cassette-gallery__item {
+        position: relative;
         display: block;
         min-width: 0;
         min-height: 0;
         overflow: hidden;
         border: 1px solid var(--color-line);
         background: #f0f0f0;
-        aspect-ratio: 1 / 1;
     }
 
     .cassette-gallery__item--main {
@@ -170,12 +171,12 @@
         grid-column: 2;
     }
 
-    /* PC: 大1（正方形）の下に 2・3 枚目（正方形）を横並び */
+    /* PC: 各大・小枠を縦横比 1:1 の正方形で描画 */
     @media (min-width: 640px) {
         .cassette-gallery {
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             grid-template-rows: auto auto;
-            /* 幅 W に対し高さ = W + gap + (W-gap)/2 ≈ 1.5W */
+            align-items: start;
             aspect-ratio: auto;
             height: auto;
             max-height: none;
@@ -184,18 +185,21 @@
             align-self: start;
         }
 
+        .cassette-gallery__item {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            align-self: start;
+        }
+
         .cassette-gallery__item--main {
             grid-column: 1 / -1;
             grid-row: 1;
-            width: 100%;
-            aspect-ratio: 1 / 1;
         }
 
         .cassette-gallery__item--side {
             grid-column: auto;
             grid-row: 2;
-            width: 100%;
-            aspect-ratio: 1 / 1;
         }
     }
 
@@ -207,6 +211,13 @@
         max-height: 100%;
         object-fit: cover;
         object-position: center;
+    }
+
+    @media (min-width: 640px) {
+        .cassette-gallery__item img {
+            position: absolute;
+            inset: 0;
+        }
     }
 
     .cassette-gallery__item--empty {
