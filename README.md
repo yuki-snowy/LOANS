@@ -2,123 +2,126 @@
 
 検討物件の登録・比較とローン試算を行う Web アプリケーションです。
 
-**必須 PHP: 8.3 以上（推奨 8.4）**  
-Laravel 13 のため、ホストの PHP 7.x では `php artisan` も `composer` も動きません。
+**必須 PHP: 8.3 以上（Sail では 8.4）**  
+ホストの PHP 7.x では `php artisan` / `composer` は使えません。
 
-## Windows / Docker で動かす（推奨）
+## Windows + Laravel Sail（推奨）
 
-ホスト PHP が古い場合は、**必ずコンテナ内**でコマンドを実行してください。
+このリポジトリは Sail のサービス名 **`laravel.test`** を使います。  
+`app` というサービスはありません。
+
+### 1. 起動（ホストの PowerShell）
 
 ```powershell
 cd D:\docker\LOANS
-docker compose build
-docker compose up -d
+git pull
+copy .env.example .env   # 初回のみ（既存 .env があるなら不要）
+docker compose up -d --build
 ```
 
-起動後:
+アプリ: http://localhost
 
-- アプリ: http://localhost:8000
-- MySQL: `mysql:3306`（ユーザー `laravel` / パスワード `secret` / DB `laravel`）
+### 2. マイグレーション（ホストの PowerShell）
 
-マイグレーションや artisan はホストではなくコンテナで:
+コンテナの**外**（`PS D:\docker\LOANS>`）で実行します。
 
 ```powershell
-docker compose exec app php -v
-docker compose exec app php artisan migrate
-docker compose exec app php artisan db:seed
-docker compose exec app php artisan storage:link
+docker compose exec laravel.test php -v
+docker compose exec laravel.test php artisan migrate
+docker compose exec laravel.test php artisan storage:link
+docker compose exec laravel.test php artisan db:seed
 ```
 
-`vendor` がホストの古い PHP で作られている場合は、コンテナで入れ直します:
+または Sail ラッパーでも同じです。
 
 ```powershell
-docker compose exec app rm -rf vendor
-docker compose exec app composer install
-docker compose restart app
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan storage:link
 ```
 
-止めるとき:
+### 3. よくある間違い
+
+| やってしまったこと | 正しいやり方 |
+|---|---|
+| コンテナに入ったあと `docker compose exec app ...` | コンテナ内に `docker` はない。中では `php artisan migrate` だけ |
+| `docker compose exec app ...` | サービス名は **`laravel.test`** |
+| ホストで `php artisan`（PHP 7.x） | 必ず `docker compose exec laravel.test php artisan ...` |
+
+コンテナに入っているとき（プロンプトが `root@...:/var/www/html#`）:
+
+```bash
+php -v
+php artisan migrate
+php artisan storage:link
+exit
+```
+
+### 4. vendor を入れ直す場合（ホストの PowerShell）
+
+```powershell
+docker compose exec laravel.test rm -rf vendor
+docker compose exec laravel.test composer install
+docker compose restart laravel.test
+```
+
+### 5. 停止
 
 ```powershell
 docker compose down
 ```
 
-## セットアップ（PHP 8.3+ がホストにある場合）
+## .env（Sail / MySQL）
 
-```bash
-composer install
-cp .env.example .env   # 初回のみ
-php artisan key:generate
-npm install
-npm run build
-```
-
-### SQLite（既定）
-
-```bash
-touch database/database.sqlite
-php artisan migrate --seed
-php artisan storage:link
-```
-
-### MySQL
-
-`.env` で MySQL を指定したうえでマイグレーションを実行してください。  
-`property_images` テーブルは最新マイグレーションで追加されます。
-
-```bash
-php artisan migrate
-php artisan storage:link
-php artisan db:seed   # 任意
-```
-
-## 起動（ホスト PHP 8.3+）
-
-```bash
-php artisan serve --host=127.0.0.1 --port=8765
-```
-
-開発時に Vite を併用する場合:
-
-```bash
-npm run dev
-```
-
-## パフォーマンス（ローカル）
-
-- セッション / キャッシュは `file`、キューは `sync`（`.env.example` 既定）。Docker MySQL への都度アクセスを避けます。
-- Leaflet は npm 同梱し、地図がある画面だけ動的読み込みします。
-- 物件一覧は表紙画像（1枚）のみ eager load します。
-
-pull 後に重さが残る場合は `.env` を確認し、次のように揃えてください。
+Sail 利用時の例:
 
 ```env
+APP_URL=http://localhost
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
 SESSION_DRIVER=file
 CACHE_STORE=file
 QUEUE_CONNECTION=sync
+```
+
+`Table 'laravel.property_images' doesn't exist` のときは、まだ migrate できていません。上の migrate を実行してください。
+
+## ホストに PHP 8.3+ がある場合
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+# SQLite を使うなら DB_CONNECTION=sqlite にして database.sqlite を作成
+php artisan migrate --seed
+php artisan storage:link
+npm install && npm run build
+php artisan serve
 ```
 
 ## テスト
 
 ```bash
 php artisan test
+# Sail 上なら
+docker compose exec laravel.test php artisan test
 ```
 
 ## 主な URL
 
 | パス | 説明 |
 |------|------|
-| `/properties` | 候補物件一覧（1枚目画像 / NO IMAGE） |
-| `/properties/create` | 物件を追加（間取り・築年・画像複数・郵便番号自動入力） |
-| `/properties/{id}` | 物件詳細（画像閲覧・地図表示） |
-| `/properties/{id}/edit` | 物件編集 |
-| `/simulations` | シミュレーション履歴 |
+| `/properties` | 候補物件一覧 |
+| `/properties/create` | 物件を追加 |
+| `/properties/{id}` | 物件詳細 |
 | `/simulations/create` | ローン試算・審査判定 |
-| `/simulations/{id}` | 試算結果（頭金概算・返済額・審査シグナル・補助金参考リンク） |
 
 ## 技術スタック
 
 - PHP 8.3+ / Laravel 13
+- Laravel Sail（PHP 8.4 + MySQL 8.4）
 - Tailwind CSS 4
-- Leaflet + OpenStreetMap（バンドル、地図ページのみ）
-- SQLite（ローカル既定） / MySQL 対応
+- Leaflet + OpenStreetMap
