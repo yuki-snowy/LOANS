@@ -48,7 +48,7 @@ final class PropertyOptions
         3 => '3階以上',
     ];
 
-    /** 駅徒歩: 5分刻み、30分超は 99 */
+    /** 駅徒歩: 5分刻み、30分以降は 99（30分以上） */
     public const STATION_MINUTES_OVER = 99;
 
     /**
@@ -56,12 +56,12 @@ final class PropertyOptions
      */
     public static function stationMinutes(): array
     {
-        return [5, 10, 15, 20, 25, 30, self::STATION_MINUTES_OVER];
+        return [5, 10, 15, 20, 25, self::STATION_MINUTES_OVER];
     }
 
     public static function stationMinutesLabel(int $minutes): string
     {
-        if ($minutes >= self::STATION_MINUTES_OVER) {
+        if ($minutes >= 30) {
             return '30分以上';
         }
 
@@ -76,7 +76,7 @@ final class PropertyOptions
         if ($minutes <= 0) {
             return 5;
         }
-        if ($minutes > 30) {
+        if ($minutes >= 30) {
             return self::STATION_MINUTES_OVER;
         }
 

@@ -158,9 +158,10 @@
         position: relative;
         aspect-ratio: 1 / 1;
         width: 100%;
-        max-width: 9rem;
+        max-width: 12rem;
+        min-height: 7.5rem;
         overflow: hidden;
-        border: 1px solid var(--color-line);
+        border: 1.5px solid var(--color-line);
         background: #fafafa;
     }
 
@@ -181,8 +182,8 @@
     .image-tile-cross {
         position: relative;
         display: block;
-        width: 2rem;
-        height: 2rem;
+        width: 2.75rem;
+        height: 2.75rem;
     }
 
     .image-tile-cross::before,
@@ -195,13 +196,13 @@
     }
 
     .image-tile-cross::before {
-        width: 2rem;
-        height: 2px;
+        width: 2.75rem;
+        height: 2.5px;
     }
 
     .image-tile-cross::after {
-        width: 2px;
-        height: 2rem;
+        width: 2.5px;
+        height: 2.75rem;
     }
 
     .image-tile-remove {

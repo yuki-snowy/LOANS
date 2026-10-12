@@ -28,10 +28,18 @@
     <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="station_minutes" class="mb-1 block text-sm font-bold text-ink">駅徒歩 <span class="text-price">*</span></label>
+            @php
+                $selectedStationMinutes = old(
+                    'station_minutes',
+                    $property?->station_minutes !== null
+                        ? \App\Support\PropertyOptions::normalizeStationMinutes((int) $property->station_minutes)
+                        : null,
+                );
+            @endphp
             <select name="station_minutes" id="station_minutes" required class="input-suumo">
                 <option value="">選択してください</option>
                 @foreach ($stationMinutes as $minutes)
-                    <option value="{{ $minutes }}" @selected((string) old('station_minutes', $property?->station_minutes) === (string) $minutes)>
+                    <option value="{{ $minutes }}" @selected((string) $selectedStationMinutes === (string) $minutes)>
                         {{ \App\Support\PropertyOptions::stationMinutesLabel($minutes) }}
                     </option>
                 @endforeach
@@ -204,13 +212,13 @@
             multiple
             class="sr-only"
         >
-        <div class="grid grid-cols-3 gap-3 sm:grid-cols-4" data-image-preview></div>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4" data-image-preview></div>
         <p class="mt-2 text-xs text-muted" data-image-status></p>
 
         @if ($property?->images?->isNotEmpty())
             <div class="mt-4">
                 <p class="mb-2 text-sm font-bold text-ink">登録済み画像</p>
-                <div class="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                     @foreach ($property->images as $image)
                         <label class="image-tile relative">
                             <img src="{{ $image->url() }}" alt="登録画像 {{ $loop->iteration }}" class="h-full w-full object-cover">
