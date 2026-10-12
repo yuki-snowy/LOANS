@@ -2,46 +2,40 @@
 
 検討物件の登録・比較とローン試算を行う Web アプリケーションです。
 
-## Phase 1（実装済み）
-
-- `properties` テーブルのマイグレーション
-- `Property` モデル（バリデーションルール付き）
-- `PropertyService` による CRUD ビジネスロジック
-- `PropertyController` + Blade ビュー（Tailwind CSS）
-- 詳細画面の地図表示（Leaflet + OpenStreetMap）
-- PHPUnit によるバリデーション・CRUD テスト
-
-## Phase 2（実装済み）
-
-- `simulations` テーブル（物件紐付け・審査入力・計算結果スナップショット）
-- `LoanCalculatorService`（元利均等返済・月額固定費合算・審査判定・審査金利ストレステスト）
-- `SimulationService` / `SimulationController` + Blade UI
-- 審査シグナル（安全 / 注意 / 危険）の色分け表示
-- PHPUnit（計算エッジケース + シミュレーションフロー）
-
-## Phase 3（実装済み）
-
-- Leaflet ＋ OpenStreetMap（CDN、APIキー不要）
-- 再利用可能な Blade コンポーネント `x-map` と `resources/js/loans-map.js`
-- 物件一覧の複数ピンマップ、詳細の単一ピン（物件名・価格ポップアップ）
-- 登録/編集時のインタラクティブ座標ピッカー（東京駅フォールバック）
-## 技術スタック
-
-- PHP 8.3+ / Laravel 13
-- Tailwind CSS 4
-- Leaflet + OpenStreetMap
-- SQLite（ローカル既定）
-
 ## セットアップ
 
 ```bash
 composer install
 cp .env.example .env   # 初回のみ
 php artisan key:generate
-touch database/database.sqlite
-php artisan migrate --seed
 npm install
 npm run build
+```
+
+### SQLite（既定）
+
+```bash
+touch database/database.sqlite
+php artisan migrate --seed
+php artisan storage:link
+```
+
+### MySQL / Docker（`DB_HOST=mysql` など）
+
+`.env` で MySQL を指定したうえで、**必ずマイグレーションを実行**してください。  
+`property_images` テーブルは最新マイグレーションで追加されます。
+
+```bash
+php artisan migrate
+php artisan storage:link
+# サンプルデータが必要なら
+php artisan db:seed
+```
+
+コードを pull したあとに `Table '...property_images' doesn't exist` が出る場合も、同じく:
+
+```bash
+php artisan migrate
 ```
 
 ## 起動
@@ -50,12 +44,26 @@ npm run build
 php artisan serve --host=127.0.0.1 --port=8765
 ```
 
-ブラウザで http://127.0.0.1:8765 を開くと物件一覧に遷移します。
+ブラウザで http://127.0.0.1:8765 を開くと候補物件に遷移します。
 
 開発時に Vite を併用する場合:
 
 ```bash
 npm run dev
+```
+
+## パフォーマンス（ローカル）
+
+- セッション / キャッシュは `file`、キューは `sync`（`.env.example` 既定）。Docker MySQL への都度アクセスを避けます。
+- Leaflet は npm 同梱し、地図がある画面だけ動的読み込みします。
+- 物件一覧は表紙画像（1枚）のみ eager load します。
+
+pull 後に重さが残る場合は `.env` を確認し、次のように揃えてください。
+
+```env
+SESSION_DRIVER=file
+CACHE_STORE=file
+QUEUE_CONNECTION=sync
 ```
 
 ## テスト
@@ -75,3 +83,10 @@ php artisan test
 | `/simulations` | シミュレーション履歴 |
 | `/simulations/create` | ローン試算・審査判定 |
 | `/simulations/{id}` | 試算結果（頭金概算・返済額・審査シグナル・補助金参考リンク） |
+
+## 技術スタック
+
+- PHP 8.3+ / Laravel 13
+- Tailwind CSS 4
+- Leaflet + OpenStreetMap（バンドル、地図ページのみ）
+- SQLite（ローカル既定） / MySQL 対応

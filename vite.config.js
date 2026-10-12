@@ -10,7 +10,8 @@ export default defineConfig({
             refresh: true,
             fonts: [
                 bunny('Noto Sans JP', {
-                    weights: [400, 500, 700, 900],
+                    // 500 を外して初回・遷移時のフォント転送を軽くする
+                    weights: [400, 700, 900],
                 }),
             ],
         }),

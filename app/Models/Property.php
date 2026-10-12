@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\Rule;
 
 #[Fillable([
@@ -155,13 +156,17 @@ class Property extends Model
         return $parts !== [] ? implode(' / ', $parts) : '—';
     }
 
-    public function coverImage(): ?PropertyImage
+    /**
+     * 一覧用の1枚目画像。
+     *
+     * @return HasOne<PropertyImage, $this>
+     */
+    public function coverImage(): HasOne
     {
-        if ($this->relationLoaded('images')) {
-            return $this->images->sortBy('sort_order')->first();
-        }
-
-        return $this->images()->orderBy('sort_order')->first();
+        return $this->hasOne(PropertyImage::class)->ofMany([
+            'sort_order' => 'min',
+            'id' => 'min',
+        ]);
     }
 
     /**
@@ -169,7 +174,9 @@ class Property extends Model
      */
     public function images(): HasMany
     {
-        return $this->hasMany(PropertyImage::class)->orderBy('sort_order')->orderBy('id');
+        return $this->hasMany(PropertyImage::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
     }
 
     /**

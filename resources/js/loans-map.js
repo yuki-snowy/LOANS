@@ -1,11 +1,24 @@
 /**
- * LOAN'S — Leaflet + OpenStreetMap helpers (no paid map APIs).
- * Expects global `L` from the Leaflet CDN.
+ * LOAN'S — Leaflet + OpenStreetMap helpers (bundled, no CDN).
  */
+
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 const OSM_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const OSM_ATTRIBUTION =
     '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+
+// Vite ではデフォルトアイコンパスが壊れるため明示指定
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
 
 /** Tokyo Station — fallback center when coordinates are missing. */
 export const DEFAULT_CENTER = {
@@ -14,15 +27,7 @@ export const DEFAULT_CENTER = {
     zoom: 13,
 };
 
-function requireLeaflet() {
-    if (typeof window.L === 'undefined') {
-        throw new Error('Leaflet (L) is not loaded. Ensure the CDN script is included.');
-    }
-
-    return window.L;
-}
-
-function createTileLayer(L) {
+function createTileLayer() {
     return L.tileLayer(OSM_TILE_URL, {
         maxZoom: 19,
         attribution: OSM_ATTRIBUTION,
@@ -51,7 +56,7 @@ function escapeHtml(value) {
 }
 
 function parseMarkers(raw) {
-    if (!raw) {
+    if (! raw) {
         return [];
     }
 
@@ -67,7 +72,6 @@ function parseMarkers(raw) {
  * Initialize a map from a root element with data-* attributes.
  */
 export function initMapElement(el) {
-    const L = requireLeaflet();
     const markers = parseMarkers(el.dataset.markers);
     const interactive = el.dataset.interactive === '1';
     const latInputId = el.dataset.latInput || '';
@@ -93,7 +97,7 @@ export function initMapElement(el) {
         scrollWheelZoom: true,
     }).setView([latitude, longitude], zoom);
 
-    createTileLayer(L).addTo(map);
+    createTileLayer().addTo(map);
 
     const leafletMarkers = [];
 
@@ -172,7 +176,7 @@ export function initMapElement(el) {
 
         map.on('click', (event) => {
             const { lat, lng } = event.latlng;
-            if (!pickerMarker) {
+            if (! pickerMarker) {
                 pickerMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
                 pickerMarker.on('dragend', () => {
                     const pos = pickerMarker.getLatLng();
@@ -185,13 +189,11 @@ export function initMapElement(el) {
             pickerMarker.bindPopup(`緯度 ${lat.toFixed(7)}<br>経度 ${lng.toFixed(7)}`).openPopup();
         });
 
-        // Prefill inputs when empty and using Tokyo Station fallback.
-        if (latInput && !latInput.value) {
+        if (latInput && ! latInput.value) {
             syncInputs(latitude, longitude, { emit: false });
         }
     }
 
-    // Invalidate size after layout settles (grid/flex).
     requestAnimationFrame(() => map.invalidateSize());
     setTimeout(() => map.invalidateSize(), 150);
 
@@ -208,25 +210,6 @@ export function initAllMaps(root = document) {
     });
 }
 
-function boot() {
-    const run = () => {
-        try {
-            initAllMaps();
-        } catch (error) {
-            // Leaflet CDN may still be loading; retry briefly.
-            if (typeof window.L === 'undefined') {
-                setTimeout(run, 50);
-                return;
-            }
-            console.error(error);
-        }
-    };
-
-    run();
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-} else {
-    boot();
+export function bootMaps() {
+    initAllMaps();
 }

@@ -41,14 +41,14 @@ class PropertyController extends Controller
 
     public function show(Property $property): View
     {
-        $property->load(['images' => fn ($query) => $query->orderBy('sort_order')->orderBy('id')]);
+        $property->load('images');
 
         return view('properties.show', compact('property'));
     }
 
     public function edit(Property $property): View
     {
-        $property->load(['images' => fn ($query) => $query->orderBy('sort_order')->orderBy('id')]);
+        $property->load('images');
 
         return view('properties.edit', [
             'property' => $property,

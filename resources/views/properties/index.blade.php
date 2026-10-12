@@ -46,14 +46,13 @@
 
         <div class="space-y-3">
             @foreach ($properties as $property)
-                @php $cover = $property->coverImage(); @endphp
                 <article class="cassette transition hover:border-suumo">
                     <a href="{{ route('properties.show', $property) }}" class="cassette-thumb">
                         @if ($property->evaluation)
                             <span class="absolute left-3 top-3 z-10 bg-suumo px-1.5 py-0.5 text-[10px] font-black text-white">評価{{ $property->evaluation }}</span>
                         @endif
-                        @if ($cover)
-                            <img src="{{ $cover->url() }}" alt="{{ $property->name }}" class="absolute inset-0 h-full w-full object-cover">
+                        @if ($property->coverImage)
+                            <img src="{{ $property->coverImage->url() }}" alt="{{ $property->name }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async">
                         @else
                             <span class="relative">NO IMAGE</span>
                         @endif

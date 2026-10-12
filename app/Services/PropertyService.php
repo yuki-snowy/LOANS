@@ -22,7 +22,7 @@ class PropertyService
     public function list(int $perPage = 15): LengthAwarePaginator
     {
         return Property::query()
-            ->with(['images' => fn ($query) => $query->orderBy('sort_order')->orderBy('id')])
+            ->with('coverImage')
             ->orderByDesc('id')
             ->paginate($perPage);
     }

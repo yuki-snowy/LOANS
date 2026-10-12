@@ -208,7 +208,8 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('sm:grid-cols-2', false);
         $response->assertSee('data-interactive="1"', false);
         $response->assertSee('data-lat-input="latitude"', false);
-        $response->assertSee('leaflet', false);
+        $response->assertSee('data-loans-map', false);
+        $response->assertDontSee('unpkg.com/leaflet', false);
     }
 
     #[Test]

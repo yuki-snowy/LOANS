@@ -45,6 +45,8 @@
                             src="{{ $image->url() }}"
                             alt="{{ $property->name }} 画像{{ $loop->iteration }}"
                             class="aspect-[4/3] h-full w-full object-cover transition group-hover:opacity-90"
+                            loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                            decoding="async"
                         >
                     </a>
                 @endforeach
