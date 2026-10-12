@@ -19,7 +19,9 @@ class PropertyCrudTest extends TestCase
         return array_merge([
             'name' => 'シティハウス目黒 501号室',
             'price' => 6200,
-            'address' => '東京都目黒区下目黒1-1-1',
+            'postal_code' => '153-0064',
+            'prefecture' => '東京都',
+            'address' => '目黒区下目黒1-1-1',
             'latitude' => 35.6335600,
             'longitude' => 139.7157800,
             'station_minutes' => 7,
@@ -36,8 +38,13 @@ class PropertyCrudTest extends TestCase
         $response = $this->get(route('properties.index'));
 
         $response->assertOk();
+        $response->assertSee('候補物件');
         $response->assertSee('表示確認用マンション');
         $response->assertSee("LOAN'S");
+        $response->assertSee('物件を追加');
+        $response->assertDontSee('物件を探す');
+        $response->assertDontSee('物件を掲載');
+        $response->assertDontSee('中古マンション');
     }
 
     #[Test]
@@ -49,6 +56,9 @@ class PropertyCrudTest extends TestCase
         $this->assertDatabaseHas('properties', [
             'name' => 'シティハウス目黒 501号室',
             'price' => 6200,
+            'postal_code' => '153-0064',
+            'prefecture' => '東京都',
+            'address' => '目黒区下目黒1-1-1',
             'evaluation' => 'B',
         ]);
     }
@@ -98,7 +108,8 @@ class PropertyCrudTest extends TestCase
         $response = $this->get(route('properties.index'));
 
         $response->assertOk();
-        $response->assertSee('地図から物件を探す');
+        $response->assertSee('地図');
+        $response->assertDontSee('地図から物件を探す');
         $response->assertSee('data-loans-map', false);
         $response->assertSee('地図一覧テスト');
     }
@@ -109,9 +120,26 @@ class PropertyCrudTest extends TestCase
         $response = $this->get(route('properties.create'));
 
         $response->assertOk();
+        $response->assertSee('物件を追加');
+        $response->assertSee('郵便番号');
+        $response->assertSee('都道府県');
+        $response->assertSee('data-postal-autofill', false);
         $response->assertSee('data-interactive="1"', false);
         $response->assertSee('data-lat-input="latitude"', false);
         $response->assertSee('leaflet', false);
+    }
+
+    #[Test]
+    public function edit_form_omits_fixed_category_label(): void
+    {
+        $property = Property::factory()->create();
+
+        $response = $this->get(route('properties.edit', $property));
+
+        $response->assertOk();
+        $response->assertSee('物件情報を編集');
+        $response->assertDontSee('中古一戸建て');
+        $response->assertDontSee('中古マンション');
     }
 
     #[Test]

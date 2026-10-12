@@ -35,6 +35,7 @@ class SimulationRequest extends FormRequest
     {
         $nullable = [
             'property_id',
+            'purchase_price',
             'bonus_payment_amount',
             'management_fee',
             'repair_reserve_fee',

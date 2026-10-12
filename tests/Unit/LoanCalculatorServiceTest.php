@@ -390,4 +390,18 @@ class LoanCalculatorServiceTest extends TestCase
             $result['total_repayment_yen']
         );
     }
+
+    #[Test]
+    public function estimates_down_payment_from_purchase_price_and_borrowing(): void
+    {
+        $result = $this->service->estimateDownPayment(
+            purchasePriceMan: 5000,
+            borrowingAmountMan: 4000,
+        );
+
+        $this->assertSame(5000, $result['purchase_price_man']);
+        $this->assertSame(4000, $result['borrowing_amount_man']);
+        $this->assertSame(1000, $result['down_payment_man']);
+        $this->assertSame(20.0, $result['down_payment_ratio_percent']);
+    }
 }

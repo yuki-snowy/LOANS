@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Property;
 use App\Models\Simulation;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +25,6 @@ class SimulationService
     }
 
     /**
-     * 入力から計算しシミュレーションを保存する。
-     *
      * @param  array<string, mixed>  $input
      */
     public function create(array $input): Simulation
@@ -40,10 +39,13 @@ class SimulationService
     }
 
     /**
-     * 保存せず計算結果だけ返す（プレビュー用）。
-     *
      * @param  array<string, mixed>  $input
-     * @return array{input: array<string, mixed>, repayment: array<string, int>, screening: array<string, mixed>}
+     * @return array{
+     *     input: array<string, mixed>,
+     *     repayment: array<string, int>,
+     *     screening: array<string, mixed>,
+     *     down_payment: array<string, int|float>
+     * }
      */
     public function preview(array $input): array
     {
@@ -69,10 +71,16 @@ class SimulationService
             reviewInterestRatePercent: (float) $payload['review_interest_rate'],
         );
 
+        $downPayment = $this->loanCalculator->estimateDownPayment(
+            purchasePriceMan: $payload['purchase_price'],
+            borrowingAmountMan: $payload['borrowing_amount'],
+        );
+
         return [
             'input' => $payload,
             'repayment' => $repayment,
             'screening' => $screening,
+            'down_payment' => $downPayment,
         ];
     }
 
@@ -90,6 +98,7 @@ class SimulationService
         $preview = $this->preview($payload);
 
         return [
+            'down_payment' => $preview['down_payment']['down_payment_man'],
             'monthly_payment_yen' => $preview['repayment']['monthly_payment_yen'],
             'total_repayment_yen' => $preview['repayment']['total_repayment_yen'],
             'total_interest_yen' => $preview['repayment']['total_interest_yen'],
@@ -108,8 +117,20 @@ class SimulationService
      */
     private function normalizeInput(array $input): array
     {
+        $propertyId = $input['property_id'] ?? null;
+        $purchasePrice = isset($input['purchase_price']) ? (int) $input['purchase_price'] : null;
+
+        if (($purchasePrice === null || $purchasePrice <= 0) && $propertyId) {
+            $purchasePrice = (int) Property::query()->whereKey($propertyId)->value('price');
+        }
+
+        if ($purchasePrice === null || $purchasePrice <= 0) {
+            $purchasePrice = (int) $input['borrowing_amount'];
+        }
+
         return [
-            'property_id' => $input['property_id'] ?? null,
+            'property_id' => $propertyId,
+            'purchase_price' => $purchasePrice,
             'borrowing_amount' => (int) $input['borrowing_amount'],
             'interest_rate' => (float) $input['interest_rate'],
             'repayment_years' => (int) $input['repayment_years'],

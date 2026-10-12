@@ -1,17 +1,16 @@
 @extends('layouts.app')
 
-@section('title', '物件一覧')
+@section('title', '候補物件')
 
 @section('content')
-    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <h1 class="section-title text-xl sm:text-2xl">物件を探す</h1>
-        <a href="{{ route('properties.create') }}" class="btn-suumo">物件を掲載する</a>
+    <div class="mb-5">
+        <h1 class="section-title text-xl sm:text-2xl">候補物件</h1>
     </div>
 
     @if ($properties->isEmpty())
         <div class="border border-dashed border-line bg-white px-6 py-16 text-center">
             <p class="text-xl font-bold text-ink">該当する物件がありません</p>
-            <a href="{{ route('properties.create') }}" class="btn-suumo mt-6">物件を掲載する</a>
+            <a href="{{ route('properties.create') }}" class="btn-suumo mt-6">物件を追加する</a>
         </div>
     @else
         @php
@@ -30,7 +29,7 @@
         @if ($mapMarkers->isNotEmpty())
             <section class="mb-5 border border-line bg-white">
                 <div class="flex items-center justify-between border-b border-line bg-suumo-muted px-4 py-2">
-                    <h2 class="text-sm font-bold text-ink">地図から物件を探す</h2>
+                    <h2 class="text-sm font-bold text-ink">地図</h2>
                     <span class="text-[11px] font-bold text-suumo-dark">ピン {{ $mapMarkers->count() }}件</span>
                 </div>
                 <x-map :markers="$mapMarkers" height="340px" :zoom="12" class="border-0" />
@@ -40,7 +39,7 @@
         <div class="mb-3 flex items-center justify-between text-sm">
             <p>
                 <span class="font-bold text-price">{{ $properties->total() }}</span>
-                <span class="text-muted">件の物件が見つかりました</span>
+                <span class="text-muted">件</span>
             </p>
             <p class="text-xs text-muted">新しい順</p>
         </div>
@@ -57,14 +56,11 @@
 
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-start justify-between gap-2">
-                            <div class="min-w-0">
-                                <p class="text-[11px] font-bold text-suumo-dark">中古マンション</p>
-                                <h2 class="mt-0.5 truncate text-base font-bold leading-snug sm:text-lg">
-                                    <a href="{{ route('properties.show', $property) }}" class="text-ink hover:text-suumo-dark hover:underline">
-                                        {{ $property->name }}
-                                    </a>
-                                </h2>
-                            </div>
+                            <h2 class="min-w-0 truncate text-base font-bold leading-snug sm:text-lg">
+                                <a href="{{ route('properties.show', $property) }}" class="text-ink hover:text-suumo-dark hover:underline">
+                                    {{ $property->name }}
+                                </a>
+                            </h2>
                             <a href="{{ route('properties.edit', $property) }}" class="btn-suumo-outline shrink-0 text-xs">編集</a>
                         </div>
 
@@ -77,7 +73,7 @@
                             <tbody>
                                 <tr>
                                     <th>所在地</th>
-                                    <td>{{ $property->address }}</td>
+                                    <td>{{ $property->fullAddress() }}</td>
                                 </tr>
                                 <tr>
                                     <th>駅徒歩</th>

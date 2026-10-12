@@ -10,15 +10,14 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         Property::factory()->create([
             'name' => 'パークタワー青山 1203号室',
             'price' => 9800,
-            'address' => '東京都港区南青山2-5-17',
+            'postal_code' => '107-0062',
+            'prefecture' => '東京都',
+            'address' => '港区南青山2-5-17',
             'latitude' => 35.6656820,
             'longitude' => 139.7120880,
             'station_minutes' => 5,
@@ -29,7 +28,9 @@ class DatabaseSeeder extends Seeder
         Property::factory()->create([
             'name' => 'シティハウス目黒 501号室',
             'price' => 6200,
-            'address' => '東京都目黒区下目黒1-1-1',
+            'postal_code' => '153-0064',
+            'prefecture' => '東京都',
+            'address' => '目黒区下目黒1-1-1',
             'latitude' => 35.6335600,
             'longitude' => 139.7157800,
             'station_minutes' => 7,
@@ -40,7 +41,9 @@ class DatabaseSeeder extends Seeder
         Property::factory()->create([
             'name' => 'プラウド世田谷 802号室',
             'price' => 5400,
-            'address' => '東京都世田谷区桜丘2-3-4',
+            'postal_code' => '156-0051',
+            'prefecture' => '東京都',
+            'address' => '世田谷区桜丘2-3-4',
             'latitude' => null,
             'longitude' => null,
             'station_minutes' => 12,

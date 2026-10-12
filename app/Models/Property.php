@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Prefectures;
 use Database\Factories\PropertyFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,8 @@ use Illuminate\Validation\Rule;
 #[Fillable([
     'name',
     'price',
+    'postal_code',
+    'prefecture',
     'address',
     'latitude',
     'longitude',
@@ -27,8 +30,6 @@ class Property extends Model
     public const EVALUATIONS = ['S', 'A', 'B', 'C'];
 
     /**
-     * 物件のバリデーションルールを返す。
-     *
      * @return array<string, mixed>
      */
     public static function rules(): array
@@ -36,6 +37,8 @@ class Property extends Model
         return [
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'integer', 'min:1', 'max:999999'],
+            'postal_code' => ['nullable', 'string', 'regex:/^\d{3}-?\d{4}$/'],
+            'prefecture' => ['required', 'string', Rule::in(Prefectures::ALL)],
             'address' => ['required', 'string', 'max:255'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
@@ -53,7 +56,9 @@ class Property extends Model
         return [
             'name' => '物件名',
             'price' => '価格（万円）',
-            'address' => '所在地',
+            'postal_code' => '郵便番号',
+            'prefecture' => '都道府県',
+            'address' => '住所',
             'latitude' => '緯度',
             'longitude' => '経度',
             'station_minutes' => '駅徒歩（分）',
@@ -75,12 +80,32 @@ class Property extends Model
         ];
     }
 
-    /**
-     * 地図表示に必要な座標が揃っているか。
-     */
     public function hasCoordinates(): bool
     {
         return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    public function formattedPostalCode(): ?string
+    {
+        if ($this->postal_code === null || $this->postal_code === '') {
+            return null;
+        }
+
+        $digits = preg_replace('/\D/', '', $this->postal_code) ?? '';
+
+        if (strlen($digits) !== 7) {
+            return $this->postal_code;
+        }
+
+        return substr($digits, 0, 3).'-'.substr($digits, 3);
+    }
+
+    public function fullAddress(): string
+    {
+        $postal = $this->formattedPostalCode();
+        $line = trim(($this->prefecture ?? '').$this->address);
+
+        return $postal ? '〒'.$postal.' '.$line : $line;
     }
 
     /**

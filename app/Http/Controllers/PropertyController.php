@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PropertyRequest;
 use App\Models\Property;
 use App\Services\PropertyService;
+use App\Support\Prefectures;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -25,6 +26,7 @@ class PropertyController extends Controller
     {
         return view('properties.create', [
             'evaluations' => Property::EVALUATIONS,
+            'prefectures' => Prefectures::ALL,
         ]);
     }
 
@@ -34,7 +36,7 @@ class PropertyController extends Controller
 
         return redirect()
             ->route('properties.show', $property)
-            ->with('success', '物件を登録しました。');
+            ->with('success', '物件を追加しました。');
     }
 
     public function show(Property $property): View
@@ -47,6 +49,7 @@ class PropertyController extends Controller
         return view('properties.edit', [
             'property' => $property,
             'evaluations' => Property::EVALUATIONS,
+            'prefectures' => Prefectures::ALL,
         ]);
     }
 

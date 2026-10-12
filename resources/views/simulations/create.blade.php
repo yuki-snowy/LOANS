@@ -32,32 +32,39 @@
 
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <label for="borrowing_amount" class="mb-1 block text-sm font-bold">借入希望額（万円） <span class="text-price">*</span></label>
-                            <input type="number" name="borrowing_amount" id="borrowing_amount" min="1" max="999999" required
-                                   value="{{ old('borrowing_amount', $selectedProperty?->price ?? 3000) }}"
+                            <label for="purchase_price" class="mb-1 block text-sm font-bold">物件価格（万円） <span class="text-price">*</span></label>
+                            <input type="number" name="purchase_price" id="purchase_price" min="1" max="999999" required
+                                   value="{{ old('purchase_price', $selectedProperty?->price ?? 3000) }}"
                                    class="input-suumo">
                         </div>
                         <div>
-                            <label for="interest_rate" class="mb-1 block text-sm font-bold">適用金利（%） <span class="text-price">*</span></label>
-                            <input type="number" name="interest_rate" id="interest_rate" step="0.001" min="0" max="20" required
-                                   value="{{ old('interest_rate', '0.500') }}"
+                            <label for="borrowing_amount" class="mb-1 block text-sm font-bold">借入希望額（万円） <span class="text-price">*</span></label>
+                            <input type="number" name="borrowing_amount" id="borrowing_amount" min="1" max="999999" required
+                                   value="{{ old('borrowing_amount', $selectedProperty?->price ?? 3000) }}"
                                    class="input-suumo">
                         </div>
                     </div>
 
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div>
+                            <label for="interest_rate" class="mb-1 block text-sm font-bold">適用金利（%） <span class="text-price">*</span></label>
+                            <input type="number" name="interest_rate" id="interest_rate" step="0.001" min="0" max="20" required
+                                   value="{{ old('interest_rate', '0.500') }}"
+                                   class="input-suumo">
+                        </div>
+                        <div>
                             <label for="repayment_years" class="mb-1 block text-sm font-bold">返済期間（年） <span class="text-price">*</span></label>
                             <input type="number" name="repayment_years" id="repayment_years" min="1" max="50" required
                                    value="{{ old('repayment_years', 35) }}"
                                    class="input-suumo">
                         </div>
-                        <div>
-                            <label for="bonus_payment_amount" class="mb-1 block text-sm font-bold">ボーナス時加算額（万円）</label>
-                            <input type="number" name="bonus_payment_amount" id="bonus_payment_amount" min="0" max="99999"
-                                   value="{{ old('bonus_payment_amount', 0) }}"
-                                   class="input-suumo">
-                        </div>
+                    </div>
+
+                    <div>
+                        <label for="bonus_payment_amount" class="mb-1 block text-sm font-bold">ボーナス時加算額（万円）</label>
+                        <input type="number" name="bonus_payment_amount" id="bonus_payment_amount" min="0" max="99999"
+                               value="{{ old('bonus_payment_amount', 0) }}"
+                               class="input-suumo">
                     </div>
                 </div>
             </section>
@@ -136,15 +143,25 @@
 
 @push('scripts')
 <script>
-    document.getElementById('property_id')?.addEventListener('change', (event) => {
+    const propertySelect = document.getElementById('property_id');
+    const purchasePrice = document.getElementById('purchase_price');
+    const borrowingAmount = document.getElementById('borrowing_amount');
+
+    propertySelect?.addEventListener('change', (event) => {
         const option = event.target.selectedOptions[0];
         const price = option?.dataset?.price;
-        const amount = document.getElementById('borrowing_amount');
-        if (price && amount && !amount.dataset.touched) {
-            amount.value = price;
+        if (!price) return;
+        if (purchasePrice && !purchasePrice.dataset.touched) {
+            purchasePrice.value = price;
+        }
+        if (borrowingAmount && !borrowingAmount.dataset.touched) {
+            borrowingAmount.value = price;
         }
     });
-    document.getElementById('borrowing_amount')?.addEventListener('input', (event) => {
+    purchasePrice?.addEventListener('input', (event) => {
+        event.target.dataset.touched = '1';
+    });
+    borrowingAmount?.addEventListener('input', (event) => {
         event.target.dataset.touched = '1';
     });
 </script>

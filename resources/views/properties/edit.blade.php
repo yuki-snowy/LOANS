@@ -5,7 +5,6 @@
 @section('content')
     <div class="mb-5">
         <h1 class="section-title">物件情報を編集</h1>
-        <p class="mt-2 text-sm text-muted">{{ $property->name }}</p>
     </div>
 
     <form method="POST" action="{{ route('properties.update', $property) }}" class="max-w-2xl border border-line bg-white p-5 sm:p-6">

@@ -163,6 +163,37 @@ class LoanCalculatorService
     }
 
     /**
+     * 物件価格と借入希望額から頭金概算（万円）を算出する。
+     *
+     * @return array{
+     *     purchase_price_man: int,
+     *     borrowing_amount_man: int,
+     *     down_payment_man: int,
+     *     down_payment_ratio_percent: float
+     * }
+     */
+    public function estimateDownPayment(int $purchasePriceMan, int $borrowingAmountMan): array
+    {
+        if ($purchasePriceMan <= 0) {
+            throw new InvalidArgumentException('物件価格は1万円以上で指定してください。');
+        }
+
+        if ($borrowingAmountMan < 0) {
+            throw new InvalidArgumentException('借入希望額は0以上で指定してください。');
+        }
+
+        $downPaymentMan = $purchasePriceMan - $borrowingAmountMan;
+        $ratio = round(($downPaymentMan / $purchasePriceMan) * 100, 2);
+
+        return [
+            'purchase_price_man' => $purchasePriceMan,
+            'borrowing_amount_man' => $borrowingAmountMan,
+            'down_payment_man' => $downPaymentMan,
+            'down_payment_ratio_percent' => $ratio,
+        ];
+    }
+
+    /**
      * 円単位の月々返済額（四捨五入）。
      */
     public function calculateMonthlyPaymentYen(int $principalYen, float $annualRatePercent, int $months): int

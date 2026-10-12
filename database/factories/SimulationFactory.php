@@ -22,6 +22,7 @@ class SimulationFactory extends Factory
     {
         $input = [
             'property_id' => null,
+            'purchase_price' => 3500,
             'borrowing_amount' => 3000,
             'interest_rate' => 0.5,
             'repayment_years' => 35,
@@ -40,6 +41,7 @@ class SimulationFactory extends Factory
 
         return [
             ...$input,
+            'down_payment' => $preview['down_payment']['down_payment_man'],
             'monthly_payment_yen' => $preview['repayment']['monthly_payment_yen'],
             'total_repayment_yen' => $preview['repayment']['total_repayment_yen'],
             'total_interest_yen' => $preview['repayment']['total_interest_yen'],
@@ -54,8 +56,13 @@ class SimulationFactory extends Factory
 
     public function forProperty(?Property $property = null): static
     {
-        return $this->state(fn () => [
-            'property_id' => $property?->id ?? Property::factory(),
-        ]);
+        return $this->state(function () use ($property) {
+            $target = $property ?? Property::factory()->create();
+
+            return [
+                'property_id' => $target->id,
+                'purchase_price' => $target->price,
+            ];
+        });
     }
 }

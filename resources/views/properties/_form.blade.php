@@ -3,7 +3,7 @@
     $property = $property ?? null;
 @endphp
 
-<div class="grid gap-5">
+<div class="grid gap-5" data-postal-autofill>
     <div>
         <label for="name" class="mb-1 block text-sm font-bold text-ink">物件名 <span class="text-price">*</span></label>
         <input type="text" name="name" id="name" value="{{ old('name', $property?->name) }}" required maxlength="255" class="input-suumo" placeholder="例: パークタワー青山 1203号室">
@@ -20,9 +20,47 @@
         </div>
     </div>
 
+    <div class="grid gap-5 sm:grid-cols-[10rem_1fr]">
+        <div>
+            <label for="postal_code" class="mb-1 block text-sm font-bold text-ink">郵便番号</label>
+            <input
+                type="text"
+                name="postal_code"
+                id="postal_code"
+                data-postal-code
+                value="{{ old('postal_code', $property?->formattedPostalCode()) }}"
+                maxlength="8"
+                inputmode="numeric"
+                autocomplete="postal-code"
+                class="input-suumo"
+                placeholder="100-0001"
+            >
+            <p class="mt-1 text-xs text-muted" data-postal-status></p>
+        </div>
+        <div>
+            <label for="prefecture" class="mb-1 block text-sm font-bold text-ink">都道府県 <span class="text-price">*</span></label>
+            <select name="prefecture" id="prefecture" data-prefecture required class="input-suumo">
+                <option value="">選択してください</option>
+                @foreach ($prefectures as $name)
+                    <option value="{{ $name }}" @selected(old('prefecture', $property?->prefecture) === $name)>{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
     <div>
-        <label for="address" class="mb-1 block text-sm font-bold text-ink">所在地 <span class="text-price">*</span></label>
-        <input type="text" name="address" id="address" value="{{ old('address', $property?->address) }}" required maxlength="255" class="input-suumo" placeholder="東京都港区南青山1-2-3">
+        <label for="address" class="mb-1 block text-sm font-bold text-ink">住所 <span class="text-price">*</span></label>
+        <input
+            type="text"
+            name="address"
+            id="address"
+            data-address
+            value="{{ old('address', $property?->address) }}"
+            required
+            maxlength="255"
+            class="input-suumo"
+            placeholder="港区南青山1-2-3"
+        >
     </div>
 
     <div class="grid gap-5 sm:grid-cols-2">

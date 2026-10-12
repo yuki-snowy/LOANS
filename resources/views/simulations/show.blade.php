@@ -14,6 +14,9 @@
             'caution' => 'text-amber-950',
             'danger' => 'text-red-800',
         ];
+        $downPaymentRatio = $simulation->purchase_price
+            ? round(($simulation->down_payment / $simulation->purchase_price) * 100, 2)
+            : null;
     @endphp
 
     <div class="mb-4 text-xs font-bold text-muted">
@@ -44,6 +47,30 @@
             <a href="{{ route('simulations.index') }}" class="btn-suumo-outline">履歴へ</a>
         </div>
     </div>
+
+    <section class="mb-5 border border-line bg-white">
+        <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">頭金概算</h2>
+        <dl class="grid gap-4 p-4 sm:grid-cols-3 sm:p-5">
+            <div>
+                <dt class="text-xs font-bold text-muted">物件価格</dt>
+                <dd class="mt-1 text-2xl font-black tabular-nums">{{ number_format($simulation->purchase_price) }}<span class="ml-1 text-sm font-bold text-muted">万円</span></dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold text-muted">借入希望額</dt>
+                <dd class="mt-1 text-2xl font-black tabular-nums">{{ number_format($simulation->borrowing_amount) }}<span class="ml-1 text-sm font-bold text-muted">万円</span></dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold text-muted">頭金概算</dt>
+                <dd class="price-em mt-1 text-2xl">
+                    {{ number_format($simulation->down_payment) }}
+                    <span class="text-sm font-bold">万円</span>
+                </dd>
+                @if ($downPaymentRatio !== null)
+                    <p class="mt-1 text-xs text-muted">物件価格比 {{ number_format($downPaymentRatio, 2) }}%</p>
+                @endif
+            </div>
+        </dl>
+    </section>
 
     <section class="mb-5 border p-5 {{ $statusStyles[$simulation->screening_status] ?? 'border-line bg-white' }}">
         <div class="flex flex-wrap items-center gap-3">
@@ -134,4 +161,28 @@
             </div>
         </section>
     </div>
+
+    <section class="mt-5 border border-line bg-white">
+        <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">補助金・支援制度（参考）</h2>
+        <ul class="divide-y divide-line">
+            @foreach ($subsidies as $item)
+                <li class="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="font-bold text-ink">{{ $item['title'] }}</p>
+                        @if (! empty($item['note']))
+                            <p class="text-xs text-muted">{{ $item['note'] }}</p>
+                        @endif
+                    </div>
+                    <a
+                        href="{{ $item['url'] }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn-suumo-outline shrink-0 text-xs"
+                    >
+                        公式案内を開く
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </section>
 @endsection

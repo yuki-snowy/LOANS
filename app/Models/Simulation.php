@@ -12,6 +12,8 @@ use Illuminate\Validation\Rule;
 
 #[Fillable([
     'property_id',
+    'purchase_price',
+    'down_payment',
     'borrowing_amount',
     'interest_rate',
     'repayment_years',
@@ -59,6 +61,7 @@ class Simulation extends Model
     {
         return [
             'property_id' => ['nullable', 'integer', 'exists:properties,id'],
+            'purchase_price' => ['required', 'integer', 'min:1', 'max:999999'],
             'borrowing_amount' => ['required', 'integer', 'min:1', 'max:999999'],
             'interest_rate' => ['required', 'numeric', 'min:0', 'max:20'],
             'repayment_years' => ['required', 'integer', 'min:1', 'max:50'],
@@ -81,6 +84,7 @@ class Simulation extends Model
     {
         return [
             'property_id' => '対象物件',
+            'purchase_price' => '物件価格（万円）',
             'borrowing_amount' => '借入希望額（万円）',
             'interest_rate' => '適用金利（%）',
             'repayment_years' => '返済期間（年）',
@@ -102,6 +106,8 @@ class Simulation extends Model
     protected function casts(): array
     {
         return [
+            'purchase_price' => 'integer',
+            'down_payment' => 'integer',
             'borrowing_amount' => 'integer',
             'interest_rate' => 'decimal:3',
             'repayment_years' => 'integer',

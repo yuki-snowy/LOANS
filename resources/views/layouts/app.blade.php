@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', '物件一覧') — {{ config('app.name', "LOAN'S") }}</title>
+    <title>@yield('title', '候補物件') — {{ config('app.name', "LOAN'S") }}</title>
     @fonts
     <link
         rel="stylesheet"
@@ -29,10 +29,10 @@
                 <p class="text-2xl font-black tracking-tight text-suumo">LOAN'S</p>
             </a>
             <nav class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold sm:gap-2">
-                <a href="{{ route('properties.index') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">物件を探す</a>
+                <a href="{{ route('properties.index') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">候補物件</a>
                 <a href="{{ route('simulations.index') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">シミュレーション</a>
                 <a href="{{ route('simulations.create') }}" class="px-2 py-1.5 text-ink hover:bg-suumo-muted hover:text-suumo-dark">ローン試算</a>
-                <a href="{{ route('properties.create') }}" class="btn-suumo ml-1">物件を掲載</a>
+                <a href="{{ route('properties.create') }}" class="btn-suumo ml-1">物件を追加</a>
             </nav>
         </div>
     </header>

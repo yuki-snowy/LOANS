@@ -19,6 +19,7 @@ class SimulationFlowTest extends TestCase
     {
         return array_merge([
             'property_id' => null,
+            'purchase_price' => 3500,
             'borrowing_amount' => 3000,
             'interest_rate' => 0.5,
             'repayment_years' => 35,
@@ -41,6 +42,7 @@ class SimulationFlowTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('ローン試算・審査判定');
+        $response->assertSee('物件価格');
         $response->assertSee('借入希望額');
         $response->assertSee('審査金利');
     }
@@ -52,6 +54,8 @@ class SimulationFlowTest extends TestCase
 
         $response = $this->post(route('simulations.store'), $this->validPayload([
             'property_id' => $property->id,
+            'purchase_price' => 3000,
+            'borrowing_amount' => 3000,
         ]));
 
         $simulation = Simulation::query()->first();
@@ -60,6 +64,8 @@ class SimulationFlowTest extends TestCase
 
         $this->assertDatabaseHas('simulations', [
             'property_id' => $property->id,
+            'purchase_price' => 3000,
+            'down_payment' => 0,
             'borrowing_amount' => 3000,
             'monthly_payment_yen' => 77876,
             'screening_status' => 'safe',
@@ -90,8 +96,12 @@ class SimulationFlowTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('審査シグナル');
+        $response->assertSee('頭金概算');
+        $response->assertSee('補助金・支援制度（参考）');
+        $response->assertSee('住宅ローン減税');
         $response->assertSee('実際の毎月引き落とし総額');
         $response->assertSee(number_format($simulation->actual_monthly_outflow_yen));
+        $response->assertSee(number_format($simulation->down_payment));
     }
 
     #[Test]

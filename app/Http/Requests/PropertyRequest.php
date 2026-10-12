@@ -48,5 +48,18 @@ class PropertyRequest extends FormRequest
         if ($this->has('memo') && $this->input('memo') === '') {
             $this->merge(['memo' => null]);
         }
+
+        if ($this->has('postal_code') && $this->input('postal_code') === '') {
+            $this->merge(['postal_code' => null]);
+        }
+
+        if ($this->filled('postal_code')) {
+            $digits = preg_replace('/\D/', '', (string) $this->input('postal_code')) ?? '';
+            if (strlen($digits) === 7) {
+                $this->merge([
+                    'postal_code' => substr($digits, 0, 3).'-'.substr($digits, 3),
+                ]);
+            }
+        }
     }
 }

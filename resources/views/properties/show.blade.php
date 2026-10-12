@@ -4,16 +4,15 @@
 
 @section('content')
     <div class="mb-4 text-xs font-bold text-muted">
-        <a href="{{ route('properties.index') }}" class="hover:text-suumo-dark">物件を探す</a>
+        <a href="{{ route('properties.index') }}" class="hover:text-suumo-dark">候補物件</a>
         <span class="mx-1">›</span>
         <span class="text-ink">物件詳細</span>
     </div>
 
     <div class="mb-4 border border-line bg-white">
         <div class="border-b border-line bg-suumo-muted px-4 py-3 sm:px-5">
-            <p class="text-[11px] font-bold text-suumo-dark">中古マンション</p>
-            <h1 class="mt-1 text-xl font-black leading-snug text-ink sm:text-2xl">{{ $property->name }}</h1>
-            <p class="mt-1 text-sm text-muted">{{ $property->address }}</p>
+            <h1 class="text-xl font-black leading-snug text-ink sm:text-2xl">{{ $property->name }}</h1>
+            <p class="mt-1 text-sm text-muted">{{ $property->fullAddress() }}</p>
         </div>
 
         <div class="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-5">
@@ -61,7 +60,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>所在地</th>
+                            <th>郵便番号</th>
+                            <td>{{ $property->formattedPostalCode() ?? '未設定' }}</td>
+                        </tr>
+                        <tr>
+                            <th>都道府県</th>
+                            <td>{{ $property->prefecture }}</td>
+                        </tr>
+                        <tr>
+                            <th>住所</th>
                             <td>{{ $property->address }}</td>
                         </tr>
                         <tr>

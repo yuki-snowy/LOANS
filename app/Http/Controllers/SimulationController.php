@@ -52,7 +52,10 @@ class SimulationController extends Controller
     {
         $simulation->load('property');
 
-        return view('simulations.show', compact('simulation'));
+        return view('simulations.show', [
+            'simulation' => $simulation,
+            'subsidies' => config('subsidies', []),
+        ]);
     }
 
     public function destroy(Simulation $simulation): RedirectResponse
