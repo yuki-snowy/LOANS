@@ -1,136 +1,102 @@
-# LOAN'S — 住宅購入・ローン比較管理アプリ
+# LOAN'S
 
-検討物件の登録・比較とローン試算を行う Web アプリケーションです。
+住宅購入の候補物件管理と、ローン試算・審査判定を行う Web アプリです。
 
-**必須 PHP: 8.3 以上（Sail では 8.4）**  
-ホストの PHP 7.x では `php artisan` / `composer` は使えません。
+## 機能
 
-## Windows + Laravel Sail（推奨）
+- **候補物件**: 登録・一覧・詳細・編集・削除
+- **物件情報**: 種目 / 間取り / 築年 / 専有面積 / 構造・階建て / 駅徒歩 / 評価 / メモ
+- **画像**: 複数枚登録（クライアント側で圧縮）、一覧は1枚目、未登録は NO IMAGE
+- **地図**: Leaflet + 国土地理院タイル。郵便番号・住所検索で地図表示
+- **ローン試算**: 月々返済・総返済・頭金概算・審査シグナル（安全 / 注意 / 危険）
+- **補助金案内**: 結果画面に公式サイトへの参考リンク（`config/subsidies.php`）
 
-このリポジトリは Sail のサービス名 **`laravel.test`** を使います。  
-`app` というサービスはありません。
+認証・外部課金 API は使いません。ローカル / Docker で完結します。
 
-### 1. 起動（ホストの PowerShell）
+## 必要環境
 
-```powershell
-cd D:\docker\LOANS
-git pull
-copy .env.example .env   # 初回のみ（既存 .env があるなら不要）
-docker compose up -d --build
-```
+| 項目 | 内容 |
+|------|------|
+| PHP | 8.3 以上（Sail 利用時は 8.4） |
+| Node.js | 20 系推奨（フロントビルド用） |
+| DB | MySQL 8（Sail）または SQLite |
+| Docker | Sail 利用時に必要 |
 
-アプリ: http://localhost
+ホストの PHP 7.x では動作しません。
 
-### 2. マイグレーション（ホストの PowerShell）
-
-コンテナの**外**（`PS D:\docker\LOANS>`）で実行します。
-
-```powershell
-docker compose exec laravel.test php -v
-docker compose exec laravel.test php artisan migrate
-docker compose exec laravel.test php artisan storage:link
-docker compose exec laravel.test php artisan db:seed
-```
-
-または Sail ラッパーでも同じです。
-
-```powershell
-./vendor/bin/sail artisan migrate
-./vendor/bin/sail artisan storage:link
-```
-
-### 3. よくある間違い
-
-| やってしまったこと | 正しいやり方 |
-|---|---|
-| コンテナに入ったあと `docker compose exec app ...` | コンテナ内に `docker` はない。中では `php artisan migrate` だけ |
-| `docker compose exec app ...` | サービス名は **`laravel.test`** |
-| ホストで `php artisan`（PHP 7.x） | 必ず `docker compose exec laravel.test php artisan ...` |
-
-コンテナに入っているとき（プロンプトが `root@...:/var/www/html#`）:
+## はじめ方（Laravel Sail / 推奨）
 
 ```bash
-php -v
-php artisan migrate
-php artisan storage:link
-exit
+git clone https://github.com/yuki-snowy/LOANS.git
+cd LOANS
+cp .env.example .env
+docker compose up -d --build
+docker compose exec laravel.test php artisan key:generate
+docker compose exec laravel.test php artisan migrate --seed
+docker compose exec laravel.test php artisan storage:link
+docker compose exec laravel.test npm install
+docker compose exec laravel.test npm run build
 ```
 
-### 4. vendor を入れ直す場合（ホストの PowerShell）
+ブラウザ: http://localhost
 
-```powershell
-docker compose exec laravel.test rm -rf vendor
-docker compose exec laravel.test composer install
-docker compose restart laravel.test
+Sail のアプリサービス名は **`laravel.test`** です。
+
+```bash
+docker compose exec laravel.test php artisan migrate
+docker compose exec laravel.test php artisan test
+./vendor/bin/sail artisan migrate   # 同等
 ```
 
-### 5. 停止
-
-```powershell
-docker compose down
-```
-
-## .env（Sail / MySQL）
-
-Sail 利用時の例:
-
-```env
-APP_URL=http://localhost
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=laravel
-DB_USERNAME=sail
-DB_PASSWORD=password
-SESSION_DRIVER=file
-CACHE_STORE=file
-QUEUE_CONNECTION=sync
-```
-
-`Table 'laravel.property_images' doesn't exist` のときは、まだ migrate できていません。上の migrate を実行してください。
-
-## ホストに PHP 8.3+ がある場合
+## ホストで動かす場合（PHP 8.3+）
 
 ```bash
 composer install
 cp .env.example .env
 php artisan key:generate
-# SQLite を使うなら DB_CONNECTION=sqlite にして database.sqlite を作成
+# .env で DB_CONNECTION=sqlite にし、database/database.sqlite を作成
 php artisan migrate --seed
 php artisan storage:link
 npm install && npm run build
 php artisan serve
 ```
 
+## 地図・住所検索（API キー不要）
+
+| 用途 | サービス |
+|------|----------|
+| 地図タイル | 国土地理院 |
+| 住所 → 座標 | 国土地理院 住所検索 |
+| 郵便番号 → 住所 | zipcloud |
+| 座標 → 住所 | HeartRails Geo API（ボタン実行） |
+
+検索結果はサーバー側でキャッシュします。
+
+## 主な画面
+
+| パス | 内容 |
+|------|------|
+| `/properties` | 候補物件一覧 |
+| `/properties/create` | 物件追加 |
+| `/properties/{id}` | 物件詳細 |
+| `/simulations/create` | ローン試算・審査判定 |
+| `/simulations/{id}` | 試算結果 |
+
 ## テスト
 
 ```bash
 php artisan test
-# Sail 上なら
+# または
 docker compose exec laravel.test php artisan test
 ```
 
-## 主な URL
-
-| パス | 説明 |
-|------|------|
-| `/properties` | 候補物件一覧 |
-| `/properties/create` | 物件を追加 |
-| `/properties/{id}` | 物件詳細 |
-| `/simulations/create` | ローン試算・審査判定 |
-
-## 地図・住所検索
-
-- タイル: 国土地理院（地理院タイル）
-- 住所 → 座標: 国土地理院 住所検索 API
-- 郵便番号 → 住所: zipcloud
-- 座標 → 住所: HeartRails Geo API（ボタン実行）
-
-いずれも API キー不要。検索結果はサーバー側でキャッシュします。
-
 ## 技術スタック
 
-- PHP 8.3+ / Laravel 13
+- Laravel 13 / PHP 8.3+
+- Blade + Tailwind CSS 4 + Vite
 - Laravel Sail（PHP 8.4 + MySQL 8.4）
-- Tailwind CSS 4
 - Leaflet + 国土地理院タイル
+
+## ライセンス
+
+[MIT](LICENSE)

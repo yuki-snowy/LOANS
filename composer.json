@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "yuki-snowy/loans",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "LOAN'S — 住宅購入の候補物件管理とローン試算・審査判定アプリ",
+    "keywords": ["laravel", "mortgage", "real-estate", "loan-simulator"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
