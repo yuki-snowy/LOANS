@@ -59,6 +59,7 @@ class PropertyCrudTest extends TestCase
         $response->assertSee('表示確認用マンション');
         $response->assertSee("LOAN'S");
         $response->assertSee('物件を追加');
+        $response->assertSee('sp-tabbar', false);
         $response->assertSee('NO IMAGE');
         $response->assertSee('種目');
         $response->assertDontSee('物件を探す');
