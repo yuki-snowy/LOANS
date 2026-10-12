@@ -89,6 +89,22 @@
         </select>
     </div>
 
+    <div data-location-search class="border border-line bg-suumo-muted/40 p-3 sm:p-4">
+        <label for="location_query" class="mb-1 block text-sm font-bold text-ink">郵便番号・住所から地図検索</label>
+        <div class="flex flex-col gap-2 sm:flex-row">
+            <input
+                type="text"
+                id="location_query"
+                data-location-query
+                class="input-suumo"
+                placeholder="例: 107-0062 または 東京都港区南青山"
+                autocomplete="off"
+            >
+            <button type="button" data-location-submit class="btn-suumo shrink-0 px-4">地図で検索</button>
+        </div>
+        <p class="mt-1 text-xs text-muted" data-location-status>国土地理院の住所検索と郵便番号APIを利用します。</p>
+    </div>
+
     <div class="grid gap-5 sm:grid-cols-2">
         <div>
             <label for="postal_code" class="mb-1 block text-sm font-bold text-ink">郵便番号</label>
@@ -148,8 +164,10 @@
         $mapLng = old('longitude', $property?->longitude);
     @endphp
     <div>
-        <p class="mb-2 text-sm font-bold text-ink">地図で座標を指定</p>
-        <p class="mb-2 text-xs text-muted">ピンを置くと、該当座標の郵便番号を自動入力します。</p>
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <p class="text-sm font-bold text-ink">地図で座標を指定（国土地理院）</p>
+            <button type="button" data-reverse-geocode class="btn-suumo-outline text-xs">この位置の住所を取得</button>
+        </div>
         <x-map
             :latitude="$mapLat"
             :longitude="$mapLng"

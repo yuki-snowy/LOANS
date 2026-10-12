@@ -27,12 +27,19 @@
         @endphp
 
         @if ($mapMarkers->isNotEmpty())
+            @php $indexMapId = 'properties-index-map'; @endphp
             <section class="mb-5 border border-line bg-white">
                 <div class="flex items-center justify-between border-b border-line bg-suumo-muted px-4 py-2">
                     <h2 class="text-sm font-bold text-ink">地図</h2>
                     <span class="text-[11px] font-bold text-suumo-dark">ピン {{ $mapMarkers->count() }}件</span>
                 </div>
-                <x-map :markers="$mapMarkers" height="340px" :zoom="12" class="border-0" />
+                <div data-map-placeholder class="flex min-h-[200px] flex-col items-center justify-center gap-3 bg-canvas px-4 py-10">
+                    <p class="text-sm text-muted">初期表示を速くするため、地図は必要時のみ読み込みます。</p>
+                    <button type="button" class="btn-suumo" data-load-map="{{ $indexMapId }}">地図を表示</button>
+                </div>
+                <div class="hidden" data-map-shell>
+                    <x-map :id="$indexMapId" :markers="$mapMarkers" height="340px" :zoom="12" :defer="true" class="border-0" />
+                </div>
             </section>
         @endif
 

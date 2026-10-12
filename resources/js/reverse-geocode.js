@@ -1,5 +1,6 @@
 /**
- * 地図座標から郵便番号を自動入力（サーバー経由で Nominatim）。
+ * 地図座標から住所・郵便番号を取得（ボタン実行・HeartRails経由）。
+ * 自動実行しない（ページ遷移の重さを避ける）。
  */
 
 function digitsOnly(value) {
@@ -20,16 +21,14 @@ async function reverseGeocode(latitude, longitude) {
         longitude: String(longitude),
     });
     const response = await fetch(`/geocode/reverse?${params.toString()}`, {
-        headers: {
-            Accept: 'application/json',
-        },
+        headers: { Accept: 'application/json' },
     });
-
-    if (! response.ok) {
-        throw new Error('reverse geocode failed');
+    const payload = await response.json();
+    if (! response.ok || ! payload?.ok) {
+        throw new Error(payload?.message || '住所の取得に失敗しました');
     }
 
-    return response.json();
+    return payload;
 }
 
 function initReverseGeocode(root = document) {
@@ -44,76 +43,51 @@ function initReverseGeocode(root = document) {
         const prefectureInput = form.querySelector('[data-prefecture]');
         const addressInput = form.querySelector('[data-address]');
         const statusEl = form.querySelector('[data-postal-status]');
+        const button = form.querySelector('[data-reverse-geocode]');
 
-        if (! latInput || ! lngInput || ! postalInput) {
+        if (! latInput || ! lngInput || ! button) {
             return;
         }
 
-        let timer = null;
-        let lastKey = '';
-
-        const run = async () => {
+        button.addEventListener('click', async (event) => {
+            event.preventDefault();
             const lat = Number(latInput.value);
             const lng = Number(lngInput.value);
             if (! Number.isFinite(lat) || ! Number.isFinite(lng)) {
+                if (statusEl) {
+                    statusEl.textContent = '先に地図で座標を指定してください';
+                }
                 return;
             }
 
-            const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
-            if (key === lastKey) {
-                return;
-            }
-            lastKey = key;
-
+            button.disabled = true;
             if (statusEl) {
-                statusEl.textContent = '座標から郵便番号を検索中…';
+                statusEl.textContent = '座標から住所を取得中…';
             }
 
             try {
                 const result = await reverseGeocode(lat, lng);
-                if (! result?.ok) {
-                    if (statusEl) {
-                        statusEl.textContent = '郵便番号を取得できませんでした';
-                    }
-                    return;
-                }
-
-                if (result.postal_code) {
+                if (result.postal_code && postalInput) {
                     postalInput.value = formatPostal(digitsOnly(result.postal_code));
-                    postalInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-
                 if (result.prefecture && prefectureInput) {
                     prefectureInput.value = result.prefecture;
                 }
-
                 if (result.address && addressInput) {
-                    if (! addressInput.value || addressInput.dataset.autofilled === '1') {
-                        addressInput.value = result.address;
-                        addressInput.dataset.autofilled = '1';
-                    }
+                    addressInput.value = result.address;
+                    addressInput.dataset.autofilled = '1';
                 }
-
                 if (statusEl) {
-                    statusEl.textContent = result.postal_code
-                        ? '座標から郵便番号を入力しました'
-                        : '座標の住所は見つかりましたが郵便番号はありません';
+                    statusEl.textContent = '座標から住所を入力しました';
                 }
-            } catch {
+            } catch (error) {
                 if (statusEl) {
-                    statusEl.textContent = '座標からの郵便番号検索に失敗しました';
+                    statusEl.textContent = error.message || '住所取得に失敗しました';
                 }
+            } finally {
+                button.disabled = false;
             }
-        };
-
-        const schedule = () => {
-            clearTimeout(timer);
-            timer = setTimeout(run, 400);
-        };
-
-        latInput.addEventListener('change', schedule);
-        lngInput.addEventListener('change', schedule);
-        form.addEventListener('loans:coordinates', schedule);
+        });
 
         form.dataset.reverseReady = '1';
     });

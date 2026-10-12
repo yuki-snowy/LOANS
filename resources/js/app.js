@@ -12,10 +12,16 @@ function onReady(callback) {
 
 onReady(() => {
     const tasks = [];
+    const needsMap = document.querySelector('[data-loans-map], [data-load-map], [data-location-search]');
 
-    if (document.querySelector('[data-loans-map]')) {
+    if (needsMap) {
         tasks.push(
-            import('./loans-map.js').then(({ bootMaps }) => bootMaps()),
+            import('./loans-map.js').then(async (mapModule) => {
+                mapModule.bootMaps();
+                if (document.querySelector('[data-location-search]')) {
+                    await import('./location-search.js');
+                }
+            }),
         );
     }
 
@@ -23,7 +29,7 @@ onReady(() => {
         tasks.push(import('./postal-autofill.js'));
     }
 
-    if (document.querySelector('[data-property-form]')) {
+    if (document.querySelector('[data-reverse-geocode]')) {
         tasks.push(import('./reverse-geocode.js'));
     }
 

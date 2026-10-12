@@ -183,8 +183,9 @@ class PropertyCrudTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('地図');
+        $response->assertSee('地図を表示');
         $response->assertDontSee('地図から物件を探す');
-        $response->assertSee('data-loans-map', false);
+        $response->assertSee('data-defer-map="1"', false);
         $response->assertSee('地図一覧テスト');
     }
 

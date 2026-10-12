@@ -9,6 +9,7 @@
     'interactive' => false,
     'latInput' => null,
     'lngInput' => null,
+    'defer' => false,
 ])
 
 @php
@@ -27,10 +28,11 @@
     $mapId = $attributes->get('id') ?: 'loans-map-'.uniqid();
 @endphp
 
-<div {{ $attributes->class(['relative overflow-hidden border border-line bg-canvas']) }}>
+<div {{ $attributes->except('id')->class(['relative overflow-hidden border border-line bg-canvas']) }}>
     <div
         id="{{ $mapId }}"
         data-loans-map
+        data-defer-map="{{ $defer ? '1' : '0' }}"
         data-latitude="{{ $hasSinglePoint ? $latitude : '' }}"
         data-longitude="{{ $hasSinglePoint ? $longitude : '' }}"
         data-title="{{ $title }}"

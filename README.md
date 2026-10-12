@@ -119,9 +119,18 @@ docker compose exec laravel.test php artisan test
 | `/properties/{id}` | 物件詳細 |
 | `/simulations/create` | ローン試算・審査判定 |
 
+## 地図・住所検索
+
+- タイル: 国土地理院（地理院タイル）
+- 住所 → 座標: 国土地理院 住所検索 API
+- 郵便番号 → 住所: zipcloud
+- 座標 → 住所: HeartRails Geo API（ボタン実行）
+
+いずれも API キー不要。検索結果はサーバー側でキャッシュします。
+
 ## 技術スタック
 
 - PHP 8.3+ / Laravel 13
 - Laravel Sail（PHP 8.4 + MySQL 8.4）
 - Tailwind CSS 4
-- Leaflet + OpenStreetMap
+- Leaflet + 国土地理院タイル

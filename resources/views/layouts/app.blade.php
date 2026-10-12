@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', '候補物件') — {{ config('app.name', "LOAN'S") }}</title>
-    @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
@@ -49,7 +48,7 @@
     <footer class="mt-8 border-t border-line bg-white">
         <div class="mx-auto max-w-5xl px-4 py-6 text-center text-xs text-muted sm:px-6">
             <p class="font-bold text-ink">LOAN'S</p>
-            <p class="mt-1">© OpenStreetMap contributors</p>
+            <p class="mt-1">地図: <a href="https://maps.gsi.go.jp/development/ichiran.html" class="underline hover:text-suumo-dark" target="_blank" rel="noopener">国土地理院</a></p>
         </div>
     </footer>
 

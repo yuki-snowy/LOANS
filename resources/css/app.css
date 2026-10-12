@@ -6,7 +6,8 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, ui-sans-serif, system-ui, sans-serif;
+    /* 外部フォントを使わず OS 標準の日本語フォントで高速化 */
+    --font-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Segoe UI', Meiryo, ui-sans-serif, system-ui, sans-serif;
 
     /* SUUMO-inspired palette */
     --color-suumo: #69b32d;

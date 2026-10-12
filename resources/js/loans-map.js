@@ -1,5 +1,5 @@
 /**
- * LOAN'S — Leaflet + OpenStreetMap helpers (bundled, no CDN).
+ * LOAN'S — Leaflet + 国土地理院タイル（APIキー不要）。
  */
 
 import L from 'leaflet';
@@ -8,11 +8,10 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-const OSM_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-const OSM_ATTRIBUTION =
-    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+const GSI_TILE_URL = 'https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png';
+const GSI_ATTRIBUTION =
+    '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">国土地理院</a>';
 
-// Vite ではデフォルトアイコンパスが壊れるため明示指定
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: markerIcon2x,
@@ -20,17 +19,19 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-/** Tokyo Station — fallback center when coordinates are missing. */
 export const DEFAULT_CENTER = {
     latitude: 35.681236,
     longitude: 139.767125,
     zoom: 13,
 };
 
+/** @type {Map<string, { map: L.Map, pickerMarker: L.Marker|null, syncInputs: Function }>} */
+const mapRegistry = new Map();
+
 function createTileLayer() {
-    return L.tileLayer(OSM_TILE_URL, {
-        maxZoom: 19,
-        attribution: OSM_ATTRIBUTION,
+    return L.tileLayer(GSI_TILE_URL, {
+        maxZoom: 18,
+        attribution: GSI_ATTRIBUTION,
     });
 }
 
@@ -68,10 +69,11 @@ function parseMarkers(raw) {
     }
 }
 
-/**
- * Initialize a map from a root element with data-* attributes.
- */
 export function initMapElement(el) {
+    if (el.dataset.mapReady === '1' && mapRegistry.has(el.id)) {
+        return mapRegistry.get(el.id).map;
+    }
+
     const markers = parseMarkers(el.dataset.markers);
     const interactive = el.dataset.interactive === '1';
     const latInputId = el.dataset.latInput || '';
@@ -95,11 +97,14 @@ export function initMapElement(el) {
 
     const map = L.map(el, {
         scrollWheelZoom: true,
+        preferCanvas: true,
     }).setView([latitude, longitude], zoom);
 
     createTileLayer().addTo(map);
 
     const leafletMarkers = [];
+    let pickerMarker = null;
+    let syncInputs = () => {};
 
     if (markers.length > 0) {
         const bounds = [];
@@ -134,82 +139,155 @@ export function initMapElement(el) {
         const m = L.marker([latitude, longitude]).addTo(map);
         m.bindPopup(popupHtml({ title, price })).openPopup();
         leafletMarkers.push(m);
+        pickerMarker = interactive ? m : null;
     } else if (interactive) {
-        const m = L.marker([latitude, longitude], { draggable: true }).addTo(map);
-        m.bindPopup('地図をクリック、またはピンをドラッグして座標を設定').openPopup();
-        leafletMarkers.push(m);
+        pickerMarker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
+        pickerMarker.bindPopup('地図をクリック、またはピンをドラッグして座標を設定').openPopup();
+        leafletMarkers.push(pickerMarker);
     }
 
     if (interactive) {
         const latInput = latInputId ? document.getElementById(latInputId) : null;
         const lngInput = lngInputId ? document.getElementById(lngInputId) : null;
-        let pickerMarker = leafletMarkers[0] || null;
+        pickerMarker = pickerMarker || leafletMarkers[0] || null;
 
-        const emitCoordinates = (lat, lng) => {
-            const formRoot = el.closest('[data-property-form]') || document;
-            formRoot.dispatchEvent(
-                new CustomEvent('loans:coordinates', {
-                    bubbles: true,
-                    detail: { latitude: lat, longitude: lng },
-                }),
-            );
-        };
+        if (pickerMarker && ! pickerMarker.dragging?.enabled()) {
+            pickerMarker.dragging?.enable?.();
+        }
 
-        const syncInputs = (lat, lng, { emit = true } = {}) => {
+        syncInputs = (lat, lng) => {
             if (latInput) {
                 latInput.value = lat.toFixed(7);
             }
             if (lngInput) {
                 lngInput.value = lng.toFixed(7);
             }
-            if (emit) {
-                emitCoordinates(lat, lng);
-            }
         };
 
-        if (pickerMarker) {
-            pickerMarker.on('dragend', () => {
-                const pos = pickerMarker.getLatLng();
-                syncInputs(pos.lat, pos.lng);
-            });
-        }
-
-        map.on('click', (event) => {
-            const { lat, lng } = event.latlng;
+        const placePicker = (lat, lng) => {
             if (! pickerMarker) {
                 pickerMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
-                pickerMarker.on('dragend', () => {
-                    const pos = pickerMarker.getLatLng();
-                    syncInputs(pos.lat, pos.lng);
-                });
             } else {
                 pickerMarker.setLatLng([lat, lng]);
             }
             syncInputs(lat, lng);
             pickerMarker.bindPopup(`緯度 ${lat.toFixed(7)}<br>経度 ${lng.toFixed(7)}`).openPopup();
+            mapRegistry.set(el.id || el.dataset.mapKey || String(el), {
+                map,
+                pickerMarker,
+                syncInputs,
+            });
+        };
+
+        pickerMarker?.on('dragend', () => {
+            const pos = pickerMarker.getLatLng();
+            syncInputs(pos.lat, pos.lng);
+        });
+
+        map.on('click', (event) => {
+            const { lat, lng } = event.latlng;
+            placePicker(lat, lng);
+            if (pickerMarker && ! pickerMarker.listens?.('dragend')) {
+                pickerMarker.on('dragend', () => {
+                    const pos = pickerMarker.getLatLng();
+                    syncInputs(pos.lat, pos.lng);
+                });
+            }
         });
 
         if (latInput && ! latInput.value) {
-            syncInputs(latitude, longitude, { emit: false });
+            syncInputs(latitude, longitude);
         }
     }
 
+    const key = el.id || `map-${mapRegistry.size}`;
+    if (! el.id) {
+        el.id = key;
+    }
+
+    mapRegistry.set(key, { map, pickerMarker, syncInputs });
+    el.dataset.mapReady = '1';
+
     requestAnimationFrame(() => map.invalidateSize());
-    setTimeout(() => map.invalidateSize(), 150);
+    setTimeout(() => map.invalidateSize(), 120);
 
     return map;
 }
 
+/**
+ * 検索結果などで地図中心・ピンを移動する。
+ */
+export function focusMap(elOrId, latitude, longitude, zoom = 16) {
+    const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+    if (! el) {
+        return;
+    }
+
+    if (el.dataset.mapReady !== '1') {
+        initMapElement(el);
+    }
+
+    const entry = mapRegistry.get(el.id);
+    if (! entry) {
+        return;
+    }
+
+    const { map, pickerMarker, syncInputs } = entry;
+    map.setView([latitude, longitude], zoom);
+
+    if (pickerMarker) {
+        pickerMarker.setLatLng([latitude, longitude]);
+        pickerMarker.bindPopup(`緯度 ${latitude.toFixed(7)}<br>経度 ${longitude.toFixed(7)}`).openPopup();
+    } else if (el.dataset.interactive === '1') {
+        const marker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
+        marker.on('dragend', () => {
+            const pos = marker.getLatLng();
+            syncInputs(pos.lat, pos.lng);
+        });
+        mapRegistry.set(el.id, { map, pickerMarker: marker, syncInputs });
+    }
+
+    syncInputs(latitude, longitude);
+    map.invalidateSize();
+}
+
 export function initAllMaps(root = document) {
     root.querySelectorAll('[data-loans-map]').forEach((el) => {
+        if (el.dataset.deferMap === '1') {
+            return;
+        }
         if (el.dataset.mapReady === '1') {
             return;
         }
         initMapElement(el);
-        el.dataset.mapReady = '1';
     });
 }
 
 export function bootMaps() {
     initAllMaps();
+
+    document.querySelectorAll('[data-load-map]').forEach((button) => {
+        if (button.dataset.loadMapReady === '1') {
+            return;
+        }
+        button.addEventListener('click', () => {
+            const section = button.closest('section');
+            const targetId = button.dataset.loadMap;
+            const el = targetId
+                ? document.getElementById(targetId)
+                : section?.querySelector('[data-loans-map]');
+            if (! el) {
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = '読み込み中…';
+            section?.querySelector('[data-map-placeholder]')?.classList.add('hidden');
+            section?.querySelector('[data-map-shell]')?.classList.remove('hidden');
+
+            el.dataset.deferMap = '0';
+            initMapElement(el);
+        });
+        button.dataset.loadMapReady = '1';
+    });
 }
