@@ -38,34 +38,41 @@
     <section class="mb-4 border border-line bg-white">
         <h2 class="border-b border-line bg-suumo-muted px-4 py-2 text-sm font-bold">物件画像</h2>
         @php
-            $galleryImages = $property->images
+            $availableImages = $property->images
                 ->filter(fn ($image) => $image->isAvailable())
-                ->take(3)
                 ->values();
+            $gallerySlots = [
+                $availableImages->get(0),
+                $availableImages->get(1),
+                $availableImages->get(2),
+            ];
         @endphp
-        @if ($galleryImages->isNotEmpty())
-            <div class="property-gallery property-gallery--count-{{ $galleryImages->count() }}" data-property-gallery>
-                @foreach ($galleryImages as $image)
+        <div class="property-gallery" data-property-gallery>
+            @foreach ($gallerySlots as $index => $image)
+                @if ($image)
                     <a
                         href="{{ $image->url() }}"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="property-gallery__item {{ $loop->first ? 'property-gallery__item--main' : 'property-gallery__item--side' }}"
+                        class="property-gallery__item {{ $index === 0 ? 'property-gallery__item--main' : 'property-gallery__item--side' }}"
                     >
                         <img
                             src="{{ $image->url() }}"
-                            alt="{{ $property->name }} 画像{{ $loop->iteration }}"
-                            loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                            alt="{{ $property->name }} 画像{{ $index + 1 }}"
+                            loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                             decoding="async"
                         >
                     </a>
-                @endforeach
-            </div>
-        @else
-            <div class="flex min-h-40 items-center justify-center px-4 py-10 text-sm font-bold text-muted">
-                NO IMAGE
-            </div>
-        @endif
+                @else
+                    <div
+                        class="property-gallery__item property-gallery__item--empty {{ $index === 0 ? 'property-gallery__item--main' : 'property-gallery__item--side' }}"
+                        aria-label="画像なし"
+                    >
+                        <span>NO IMAGE</span>
+                    </div>
+                @endif
+            @endforeach
+        </div>
     </section>
 
     <div class="grid gap-4 lg:grid-cols-2">

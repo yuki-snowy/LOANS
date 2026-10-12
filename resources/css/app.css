@@ -143,7 +143,7 @@
         object-position: center;
     }
 
-    /* 詳細: 大1枚 + 小2枚（右列で隙間を埋める） */
+    /* 詳細: 常時3枠（大1 + 小2）。欠ける枠は NO IMAGE */
     .property-gallery {
         display: grid;
         gap: 0.5rem;
@@ -162,8 +162,8 @@
         transition: opacity 0.15s ease;
     }
 
-    .property-gallery__item:hover,
-    .property-gallery__item:focus-visible {
+    .property-gallery__item:not(.property-gallery__item--empty):hover,
+    .property-gallery__item:not(.property-gallery__item--empty):focus-visible {
         opacity: 0.92;
         outline: none;
     }
@@ -186,27 +186,15 @@
         object-position: center;
     }
 
-    .property-gallery--count-1 {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
-    }
-
-    .property-gallery--count-1 .property-gallery__item--main {
-        grid-row: auto;
-        max-width: 28rem;
-    }
-
-    .property-gallery--count-2 {
-        grid-template-rows: 1fr;
-    }
-
-    .property-gallery--count-2 .property-gallery__item--main {
-        grid-row: auto;
-    }
-
-    .property-gallery--count-2 .property-gallery__item--side {
-        grid-row: 1;
-        grid-column: 2;
+    .property-gallery__item--empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(160deg, #dff3c4 0%, #f7f7f7 55%, #e8e8e8 100%);
+        color: var(--color-suumo-dark);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
     }
 
     @media (max-width: 639px) {

@@ -131,9 +131,23 @@ class PropertyCrudTest extends TestCase
         $show->assertOk();
         $show->assertSee('物件画像');
         $show->assertSee('data-property-gallery', false);
-        $show->assertSee('property-gallery--count-2', false);
         $show->assertSee('property-gallery__item--main', false);
-        $show->assertDontSee('NO IMAGE');
+        $show->assertSee('property-gallery__item--side', false);
+        $show->assertSee('property-gallery__item--empty', false);
+        $show->assertSee('NO IMAGE');
+    }
+
+    #[Test]
+    public function show_gallery_always_renders_three_slots_with_placeholders(): void
+    {
+        $property = Property::factory()->create(['name' => '画像なし物件']);
+
+        $response = $this->get(route('properties.show', $property));
+
+        $response->assertOk();
+        $response->assertSee('data-property-gallery', false);
+        $this->assertSame(3, substr_count($response->getContent(), 'property-gallery__item--empty'));
+        $response->assertSee('NO IMAGE');
     }
 
     #[Test]
