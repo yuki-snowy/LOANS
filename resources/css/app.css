@@ -346,17 +346,111 @@
     .pagination-bar {
         display: flex;
         justify-content: center;
-    }
-
-    .pagination-bar nav {
         width: 100%;
     }
 
-    .pagination-bar [aria-current='page'] span,
-    .pagination-bar .bg-suumo {
-        background-color: var(--color-suumo) !important;
-        border-color: var(--color-suumo) !important;
-        color: #fff !important;
+    /* ページネーション: テーマ緑 × 白 */
+    .pager {
+        width: 100%;
+    }
+
+    .pager__mobile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .pager__desktop {
+        display: none;
+    }
+
+    @media (min-width: 640px) {
+        .pager__mobile {
+            display: none;
+        }
+
+        .pager__desktop {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+    }
+
+    .pager__summary {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-muted);
+    }
+
+    .pager__summary span {
+        font-weight: 800;
+        color: var(--color-suumo-dark);
+    }
+
+    .pager__pages {
+        display: inline-flex;
+        overflow: hidden;
+        border: 1px solid var(--color-suumo);
+        border-radius: 2px;
+        background: #fff;
+    }
+
+    .pager__page,
+    .pager__btn {
+        display: inline-flex;
+        min-width: 2.5rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.85rem;
+        border: 0;
+        background: #fff;
+        color: var(--color-suumo-dark);
+        font-size: 0.875rem;
+        font-weight: 700;
+        line-height: 1.25;
+        text-decoration: none;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .pager__page + .pager__page {
+        border-left: 1px solid var(--color-suumo);
+    }
+
+    .pager__page:hover,
+    .pager__btn:hover {
+        background: var(--color-suumo-muted);
+        color: var(--color-suumo-dark);
+    }
+
+    .pager__page.is-current {
+        background: var(--color-suumo);
+        color: #fff;
+        cursor: default;
+    }
+
+    .pager__page.is-disabled,
+    .pager__btn.is-disabled {
+        background: #fff;
+        color: #a3a3a3;
+        cursor: not-allowed;
+    }
+
+    .pager__page.is-ellipsis {
+        color: var(--color-muted);
+        cursor: default;
+    }
+
+    .pager__btn {
+        border: 1px solid var(--color-suumo);
+        border-radius: 2px;
+        min-width: 5.5rem;
+    }
+
+    .pager__btn.is-disabled {
+        border-color: var(--color-line);
     }
 
     .price-em {
