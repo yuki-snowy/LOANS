@@ -19,8 +19,8 @@
                 </span>
             </a>
 
-            <h1 class="landing__headline">候補物件とローン、<br class="sm:hidden">いまいくら？</h1>
-            <p class="landing__lead">住宅購入の候補管理と、返済・審査判定を見える化します。</p>
+            <h1 class="landing__headline">「理想の家」も「現実の返済」も、<br class="sm:hidden">ここで全部見つかる。</h1>
+            <p class="landing__lead">候補物件の比較から、審査の厳しさ・毎月の返済額までまるごと見える化します。</p>
 
             <div class="landing__actions">
                 <a href="{{ route('properties.index') }}" class="landing__btn landing__btn--primary">候補物件へ</a>
